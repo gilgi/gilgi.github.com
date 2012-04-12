@@ -1,8 +1,12 @@
 /* Custom Captions
--------------------------------------------------- */
+-------------------------------------------------- 
 .custom-caption {
   margin-left: -10px;
   padding-right: 30px;
+}*/
+
+.caption p h5 {
+  padding: 5px;
 }
 
 /* Push the footer down
@@ -453,11 +457,11 @@ hr.soften {
 /* LARGE DESKTOP SCREENS */
 @media (min-width: 1210px) {
 
-  /* 300x300 thumbnails look better with a bit of top padding */
+  /* 300x300 thumbnails look better with a bit of top padding 
   .thumbnail > img {
     padding-top: 25px;
     padding-bottom: 10px;
-  }
+  }*/
 
   /* Update subnav container */
   .subnav-fixed .nav {
