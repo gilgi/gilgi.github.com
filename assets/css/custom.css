@@ -5,7 +5,7 @@
   padding-right: 30px;
 }*/
 
-.caption p h5 {
+.caption > p h5 {
   padding: 5px;
 }
 
