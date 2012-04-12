@@ -1,0 +1,8 @@
+---
+layout: post
+title: First Post
+blog: active
+author: Thomas
+---
+
+First post. That is all.

@@ -1,0 +1,15 @@
+<!-- Le Masthead
+================================================== -->
+<header class="jumbotron subhead" id="overview">
+  <h1>{{ page.title }}</h1>
+  <p class="lead">{{ page.subtitle }}</p>
+  {% if page.subnav %}
+  <div class="subnav">
+    <ul class="nav nav-pills">
+      {% for section in page.subnav %}
+      <li><a href="#{{ section.id }}">{{ section.title }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</header>

@@ -1,0 +1,16 @@
+---
+layout: page
+title: Blog
+subtitle: What's nu? Frequency
+blog: active
+---
+
+{% for post in site.posts %}
+<div class="well">
+<div class="page-header blog-header">
+  <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+  <p>Posted by {{ post.author}} on {{ post.date | date_to_long_string }}</p>
+</div>
+{{ post.content }}
+</div>
+{% endfor %}

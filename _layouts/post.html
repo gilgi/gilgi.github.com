@@ -1,0 +1,19 @@
+---
+layout: default
+---
+<!-- Le Masthead
+================================================== -->
+<header class="jumbotron subhead" id="overview">
+  <h1>Blog</h1>
+  <p class="lead">What's nu? Frequency</p>
+</header>
+
+<div class="well">
+<div class="page-header blog-header">
+  <h2><a href="">{{ page.title }}</a></h2>
+  <p>Posted by {{ page.author}} on {{ page.date | date_to_long_string}}</p>
+</div>
+
+{{ content }}
+
+</div>

@@ -1,0 +1,12 @@
+---
+layout: page
+---
+
+{% for section in page.subnav %}
+<section id="{{ section.id }}">
+<div class="page-header">
+<h1>{{ section.title }} <small>{{ section.subtitle }}</small></h1>
+</div>
+{{ section.content | textilize }}
+</section>
+{% endfor %}
