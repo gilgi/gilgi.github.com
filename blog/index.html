@@ -1,16 +1,430 @@
----
-layout: page
-title: Blog
-subtitle: What's nu? Frequency
-blog: active
----
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#
+" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="official blog of the gilgi.org network">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>gilgi.org</title>
+<link href="../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/ipython.min.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/nikola_ipython.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
+<link rel="canonical" href="https://gilgi.org/blog/">
+<link rel="next" href="index-1.html" type="text/html">
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script><!--[if lt IE 9]><script src="../assets/js/html5.js"></script><![endif]-->
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
 
-{% for post in site.posts %}
-<div class="well">
-<div class="page-header blog-header">
-  <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
-  <p>Posted by {{ post.author}} on {{ post.date | date_to_long_string }}</p>
+<!-- Menubar -->
+
+<nav class="navbar navbar-expand-md static-top mb-4
+navbar-dark bg-dark
+"><div class="container">
+<!-- This keeps the margins nice -->
+        <a class="navbar-brand" href="https://gilgi.org/">
+
+            <span id="blog-title">gilgi.org</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="bs-navbar">
+            <ul class="navbar-nav mr-auto">
+<li class="nav-item">
+<a href="../research/" class="nav-link">Research</a>
+                </li>
+<li class="nav-item">
+<a href="../code/" class="nav-link">Code</a>
+                </li>
+<li class="nav-item active">
+<a href="." class="nav-link">Blog <span class="sr-only">(active)</span></a>
+                </li>
+<li class="nav-item">
+<a href="../categories/" class="nav-link">Tags</a>
+                </li>
+<li class="nav-item">
+<a href="../archive/" class="nav-link">Archive</a>
+                </li>
+<li class="nav-item">
+<a href="http://status.gilgi.org" class="nav-link">Network Status</a>
+
+                
+            </li>
+</ul>
+<!-- Google custom search --><form method="get" action="https://www.google.com/search" class="navbar-form navbar-right" role="search" _lpchecked="1">
+<input type="text" name="q" class="form-control" placeholder="Search"><input type="hidden" name="sitesearch" value="https://gilgi.org/">
+</form>
+<!-- End of custom search -->
+
+
+            <ul class="navbar-nav navbar-right"></ul>
 </div>
-{{ post.content }}
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        
+        
+        
+
+    
+
+
+    
+<div class="postindex">
+    <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="optimal-bh-fdr-control/" class="u-url">Optimal BH-FDR control</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="optimal-bh-fdr-control/" rel="bookmark">
+            <time class="published dt-published" datetime="2019-11-15T00:00:00-05:00" itemprop="datePublished" title="2019-11-15">2019-11-15</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="optimal-bh-fdr-control/#disqus_thread" data-disqus-identifier="cache/posts/optimal_bh_fdr_control.html">Comments</a>
+
+
+        </p>
 </div>
-{% endfor %}
+    </header><div class="p-summary entry-summary">
+    <div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../images/blog/optimal-bh-fdr-control.png" alt=""></p>
+<p>Controlling for <a href="https://en.wikipedia.org/wiki/False_discovery_rate">false discovery rate (FDR)</a> has become a ubiquitous step in statistical analyses that test multiple hypotheses, like those commonly performed in the genomics field. The seminal method for controlling FDR, the <a href="https://en.wikipedia.org/wiki/False_discovery_rate#Benjamini%E2%80%93Hochberg_procedure">Benjamini-Hochberg (BH-FDR) procedure</a> guarantees FDR control under some simple assumptions, but how does it really perform in the limit of an ideal dataset and ideal statistical test? In this post, we'll dive into this question and reveal that the proportion of truly non-null data points has a major influence on the behavior of BH-FDR.</p>
+<p><a href="https://colab.research.google.com/drive/1VDCDU8GbbXZh3gP_rlX45OI4KEwT-S_0"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p class="more"><a href="optimal-bh-fdr-control/">Read more…</a></p>
+</div>
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="eigenvector/" class="u-url">First eigenvector vs principle component of a symmetric matrix </a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="eigenvector/" rel="bookmark">
+            <time class="published dt-published" datetime="2019-10-13T00:00:00-04:00" itemprop="datePublished" title="2019-10-13">2019-10-13</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="eigenvector/#disqus_thread" data-disqus-identifier="cache/posts/eigenvector.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Two concepts that are easy to confuse are <a href="https://en.wikipedia.org/wiki/Eigenvalues_and_eigenvectors">eigenvectors</a> and <a href="https://en.wikipedia.org/wiki/Principal_component_analysis">principle components</a>. When the matrix in question is symmetric, there is a relationship between the first eigenvector and the projection of the data onto its first principle component. In this post, we'll use <a href="https://en.wikipedia.org/wiki/Diagonalizable_matrix#Diagonalization">diagonalization</a> and <a href="https://en.wikipedia.org/wiki/Singular_value_decomposition">singular value decomposition</a> to try to shed some light on this.</p>
+<p><a href="https://colab.research.google.com/drive/1Qtzk8tt_CJ0tHNmQIun_ytem6eGXZLdz"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p class="more"><a href="eigenvector/">Read more…</a></p>
+</div>
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="dotafriends/" class="u-url">Dota 2 friend network visualization</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="dotafriends/" rel="bookmark">
+            <time class="published dt-published" datetime="2019-08-14T00:00:00-04:00" itemprop="datePublished" title="2019-08-14">2019-08-14</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="dotafriends/#disqus_thread" data-disqus-identifier="cache/posts/dotafriends.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../images/blog/dotafriends.png" alt=""></p>
+<p>What better way is there to enjoy games than with friends? Of course, some friends have better synergies than others. What if there was a way to quantify those synergies and draw a group of friends as a graph, with high-synergy friends placed close together and low-synergy friends placed further apart?</p>
+<p>In this post, we'll use the <a href="https://docs.opendota.com/">OpenDota API</a>, <a href="https://en.wikipedia.org/wiki/Multidimensional_scaling">multidimensional scaling (MDS)</a>, and <a href="https://networkx.github.io/">networkx</a> to visualize a network of friends playing Dota 2 together.</p>
+<p><a href="https://colab.research.google.com/drive/1lJkUGqKbb8GSzYP6ClreBx41lbwtf1P2"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p class="more"><a href="dotafriends/">Read more…</a></p>
+</div>
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="poisson-rate-estimation-variance/" class="u-url">Estimation variance of the Poisson rate parameter</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="poisson-rate-estimation-variance/" rel="bookmark">
+            <time class="published dt-published" datetime="2019-08-13T00:00:00-04:00" itemprop="datePublished" title="2019-08-13">2019-08-13</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="poisson-rate-estimation-variance/#disqus_thread" data-disqus-identifier="cache/posts/poisson_rate_estimation_variance.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../images/blog/poisson-rate-estimation-variance.png" alt=""></p>
+<p>Many applications of statistics to genomics involve modelling read counts from <a href="https://en.wikipedia.org/wiki/DNA_sequencing#High-throughput_methods">high-throughput sequencing experiments</a> as originating from a <a href="https://en.wikipedia.org/wiki/Poisson_point_process#Interpreted_as_a_counting_process">Poisson process</a> (or as something similar based on the closely-related <a href="https://en.wikipedia.org/wiki/Negative_binomial_distribution">negative binomial distribution</a>). In these experiments, we often want to estimate the true concentration $\mu$ of a particular DNA or RNA sequence in a sequencing library. This corresponds to the "rate" parameter of a Poison process, while the total number of reads sequenced can be thought of as related to its "elapsed time". How does the sequencing depth of the dataset (the total number of reads) impact the variance in the estimate of the true concentration? Read on to find out!</p>
+<p><a href="https://colab.research.google.com/drive/1Zc84Ohe9LCh3jpJd9OJBjIB9lKLt5Lbq"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p class="more"><a href="poisson-rate-estimation-variance/">Read more…</a></p>
+</div>
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="knight-dialer/" class="u-url">Partially solving the "knight dialer" problem using graph exploration</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="knight-dialer/" rel="bookmark">
+            <time class="published dt-published" datetime="2019-06-20T00:00:00-04:00" itemprop="datePublished" title="2019-06-20">2019-06-20</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="knight-dialer/#disqus_thread" data-disqus-identifier="cache/posts/knight_dialer.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../images/blog/knight-dialer.png" alt=""></p>
+<p>This week, a friend showed me the <a href="https://leetcode.com/problems/knight-dialer/">knight dialer coding problem</a>. As usual, I couldn't resist framing it as a graph exploration problem - read on to see how I tackled it.</p>
+<p><a href="https://colab.research.google.com/drive/1eJ1GHt4YTn4n65TrUxQBXwJOfFoK0gMd"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p class="more"><a href="knight-dialer/">Read more…</a></p>
+</div>
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="autochess/" class="u-url">Visualizing trajectories of Dota Auto Chess games using LDA and TSNE</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="autochess/" rel="bookmark">
+            <time class="published dt-published" datetime="2019-05-18T00:00:00-04:00" itemprop="datePublished" title="2019-05-18">2019-05-18</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="autochess/#disqus_thread" data-disqus-identifier="cache/posts/autochess.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../images/blog/autochess.png" alt=""></p>
+<p>The Dota 2 custom map "Dota Auto Chess" is taking the gaming world by storm. Auto Chess is almost like a card game in which players attempt to improve their hand round after round while their "chesses" (cards) battle the other players in the game automatically. In this post, we'll explore the potential of <a href="https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation">latent Dirichlet allocation</a> to model strategies (specific combinations of cards that are often played together) as "topics". We will then try to visualize the evolution of Auto Chess "hands" over the course of individual games in terms of their topics using <a href="https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding">t-SNE</a>. These kinds of visualizations might help us learn how to more effectively evolve our strategies.</p>
+<p><a href="https://colab.research.google.com/drive/1zlAkpsSBb6HN0Jqzfk842fPZlnbmxF2F"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p class="more"><a href="autochess/">Read more…</a></p>
+</div>
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="mle-scaled-mean/" class="u-url">MLE estimation of mean parameter for scaled distributions</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="mle-scaled-mean/" rel="bookmark">
+            <time class="published dt-published" datetime="2019-05-08T00:00:00-04:00" itemprop="datePublished" title="2019-05-08">2019-05-08</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="mle-scaled-mean/#disqus_thread" data-disqus-identifier="cache/posts/mle_scaled_mean.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../images/blog/mle-scaled-mean.png" alt=""></p>
+<p>It's pretty common to run into statistical models that fit some kind of normalization factors that can be used to scale different data points to a common, comparable scale. When this happens to a <a href="https://en.wikipedia.org/wiki/Location%E2%80%93scale_family">location-scale family distribution</a> like the normal distribution, estimating the mean parameter of such a scaled distribution is pretty straightforward. In many genomics contexts, however, non-location-scale distributions such as the <a href="https://en.wikipedia.org/wiki/Poisson_distribution">Poisson</a> or <a href="https://en.wikipedia.org/wiki/Negative_binomial_distribution">negative binomial (NB)</a> distribution are used quite often. For example, it's common to model RNA-seq read counts using NB distributions scaled by the library size (i.e., some measure of the total sequencing depth). In this post, we'll take a deep dive into how to estimate the parameters of these "scaled" statistical models.</p>
+<p><a href="https://colab.research.google.com/drive/1SgMMvc3XhfIXoBx8tsyJt-yyBDlRFQCJ"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p class="more"><a href="mle-scaled-mean/">Read more…</a></p>
+</div>
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="heatmap-simulation/" class="u-url">Simulating maps of 3D genome architecture</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="heatmap-simulation/" rel="bookmark">
+            <time class="published dt-published" datetime="2019-04-29T00:00:00-04:00" itemprop="datePublished" title="2019-04-29">2019-04-29</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="heatmap-simulation/#disqus_thread" data-disqus-identifier="cache/posts/heatmap_simulation.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../images/blog/heatmap-simulation.png" alt=""></p>
+<p><a href="../research">My research</a> focuses on analyzing maps of the 3D structure of the genome. One of the things I always find helpful when trying to understand complex data like this is trying to simulate it myself to get a sense for how the data might behave. In this post, we'll add complexity step-by-step and work our way up to simulating realistic-looking genome folding maps from scratch!</p>
+<p><a href="https://colab.research.google.com/drive/19XfIwzGN0Zk0F48QBjjXIzt9yEq9DwFp"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p class="more"><a href="heatmap-simulation/">Read more…</a></p>
+</div>
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="linear-regression/" class="u-url">Linear regression in Python (UPenn ENM 375 guest lecture)</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="linear-regression/" rel="bookmark">
+            <time class="published dt-published" datetime="2019-04-16T00:00:00-04:00" itemprop="datePublished" title="2019-04-16">2019-04-16</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="linear-regression/#disqus_thread" data-disqus-identifier="cache/posts/linear_regression.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../images/blog/linear-regression.png" alt=""></p>
+<p>I was recently invited to give a guest lecture in the course <a href="https://catalog.upenn.edu/courses/enm/">ENM 375 Biological Data Science I - Fundamentals of Biostatistics</a> at the University of Pennsylvania on the topic of linear regression in Python. As part of my lecture, I walked through this notebook. It might serve as a useful reference, covering everything from simulation and fitting to a wide variety of diagnostics. The walkthrough includes explanations of how to do everything in vanilla <code>numpy</code>/<code>scipy</code>, <code>scikit-learn</code>, and <code>statsmodels</code>. As a bonus, there's even a section on logistic regression at the end.</p>
+<p>Read on for more!</p>
+<p><a href="https://colab.research.google.com/drive/12UfEC7rAV_bAZlxQXt3bk-isCrDMZ07j"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p class="more"><a href="linear-regression/">Read more…</a></p>
+</div>
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="stein/" class="u-url">Stein's paradox</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="stein/" rel="bookmark">
+            <time class="published dt-published" datetime="2018-11-29T00:00:00-05:00" itemprop="datePublished" title="2018-11-29">2018-11-29</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="stein/#disqus_thread" data-disqus-identifier="cache/posts/stein.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../images/blog/stein.png" alt=""></p>
+<p>I recently heard of <a href="https://en.wikipedia.org/wiki/Stein%27s_example">Stein's paradox</a>, and at first I couldn't believe it! In this post, I'll convince myself by comparing the risk of a <a href="https://en.wikipedia.org/wiki/James%E2%80%93Stein_estimator">James–Stein estimator</a> to a naive estimator on a simulated high-dimensional dataset.</p>
+<p><a href="https://colab.research.google.com/drive/1MriKl_EaJM6jdDUFcK4Fc7LrgwqXJf2U"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p class="more"><a href="stein/">Read more…</a></p>
+</div>
+</div>
+</div>
+    </div>
+    </article>
+</div>
+
+        <ul class="pager postindexpager clearfix">
+<li class="next"><a href="index-1.html" rel="next">Older posts</a></li>
+        </ul>
+<script>var disqus_shortname="gilgi-blog";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha384-3lJUsx1TJHt7BA4udB5KPnDrlkO8T6J6v/op7ui0BbCjvZ9WqV4Xm6DTP6kQ/iBH" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script><!--End of body content--><footer id="footer">
+            Contents © 2019         <a href="mailto:site@gilgi.org">gilgi</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+            
+        </footer>
+</div>
+</div>
+
+
+        <script src="../assets/js/all-nocdn.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

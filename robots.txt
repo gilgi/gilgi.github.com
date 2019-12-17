@@ -1,4 +1,4 @@
-User-agent: *
-Disallow: /availability/
-Disallow: /math/
-Disallow: /chatlogs/
+Sitemap: https://gilgi.org/sitemapindex.xml
+
+User-Agent: *
+Host: gilgi.org

@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#
+" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estimating enzyme kinetics parameters from steady-state observations | gilgi.org</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/ipython.min.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/nikola_ipython.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../../rss.xml">
+<link rel="canonical" href="https://gilgi.org/blog/biochemical-kinetics-steady-state-combinations/">
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script><!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="gilgi">
+<link rel="prev" href="../biochemical-kinetics-reaction-velocities/" title="Fitting a Michaelis-Menten model to biochemical kinetics data" type="text/html">
+<link rel="next" href="../dota-hero-embedding/" title="Creating Dota 2 hero embeddings with Word2vec" type="text/html">
+<meta property="og:site_name" content="gilgi.org">
+<meta property="og:title" content="Estimating enzyme kinetics parameters from steady-state observations">
+<meta property="og:url" content="https://gilgi.org/blog/biochemical-kinetics-steady-state-combinations/">
+<meta property="og:description" content="In yesterday's post, we did some simple fitting of a Michaelis-Menten enzyme kinetics model for a single step of an isolated reaction. What happens when we have multiple reactions with multiple specie">
+<meta property="og:image" content="https://gilgi.org/blog/biochemical-kinetics-steady-state-combinations/images/blog/biochemical-kinetics-steady-state-combinations.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2018-01-12T00:00:00-05:00">
+<meta property="article:tag" content="biochemisty">
+<meta property="article:tag" content="enzyme kinetics">
+<meta property="article:tag" content="notebook">
+<meta property="article:tag" content="optimization">
+<meta property="article:tag" content="Python">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-expand-md static-top mb-4
+navbar-dark bg-dark
+"><div class="container">
+<!-- This keeps the margins nice -->
+        <a class="navbar-brand" href="https://gilgi.org/">
+
+            <span id="blog-title">gilgi.org</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="bs-navbar">
+            <ul class="navbar-nav mr-auto">
+<li class="nav-item">
+<a href="../../research/" class="nav-link">Research</a>
+                </li>
+<li class="nav-item">
+<a href="../../code/" class="nav-link">Code</a>
+                </li>
+<li class="nav-item">
+<a href="../" class="nav-link">Blog</a>
+                </li>
+<li class="nav-item">
+<a href="../../categories/" class="nav-link">Tags</a>
+                </li>
+<li class="nav-item">
+<a href="../../archive/" class="nav-link">Archive</a>
+                </li>
+<li class="nav-item">
+<a href="http://status.gilgi.org" class="nav-link">Network Status</a>
+
+                
+            </li>
+</ul>
+<!-- Google custom search --><form method="get" action="https://www.google.com/search" class="navbar-form navbar-right" role="search" _lpchecked="1">
+<input type="text" name="q" class="form-control" placeholder="Search"><input type="hidden" name="sitesearch" value="https://gilgi.org/">
+</form>
+<!-- End of custom search -->
+
+
+            <ul class="navbar-nav navbar-right">
+<li class="nav-item">
+    <a href="index.ipynb" id="sourcelink" class="nav-link">Source</a>
+    </li>
+
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        
+        
+        
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Estimating enzyme kinetics parameters from steady-state observations</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
+                    gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="." rel="bookmark">
+            <time class="published dt-published" datetime="2018-01-12T00:00:00-05:00" itemprop="datePublished" title="2018-01-12">2018-01-12</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="#disqus_thread" data-disqus-identifier="cache/posts/biochemical_kinetics_steady_state_combinations.html">Comments</a>
+
+
+            
+        </p>
+<p class="sourceline"><a href="index.ipynb" class="sourcelink">Source</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../../images/blog/biochemical-kinetics-steady-state-combinations.png" alt=""></p>
+<p>In <a href="../biochemical-kinetics-reaction-velocities">yesterday's post</a>, we did some simple fitting of a <a href="https://en.wikipedia.org/wiki/Enzyme_kinetics#Michaelis%E2%80%93Menten_kinetics">Michaelis-Menten enzyme kinetics model</a> for a single step of an isolated reaction. What happens when we have multiple reactions with multiple species involved occuring at the same time? Is it possible to infer something about the kinetic parameters of such a system by only looking at the steady-state concentrations of the species in the system under different experimental conditions? In this post, we'll apply some differential equations and simple optimization in Python to try to find out.</p>
+<p><a href="https://drive.google.com/file/d/1W6e5SOa43QL5oSMiDajn3SlHSajkE_XZ/view?usp=sharing"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<!-- TEASER_END -->
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's assume we are interested in the following dynamical system:</p>
+$$ \frac{dy_1}{dt} = a_{11}y_1 + a_{12}y_2 + b_1 $$$$ \frac{dy_2}{dt} = a_{21}y_1 + a_{22}y_2 + b_2 $$<p>where $y_1$ and $y_2$ represent the concentrations of some species with intrinsic growth/decay rates $b_1$ and $b_2$, exponential growth/decay rates $a_{11}$ and $a_{22}$, and exponential conversion rates $a_{12}$ and $a_{21}$, respectively.</p>
+<p>Specifically, let's assume we believe that this dynamical system is a good model for an experiment we can perform in the lab in which we measure the steady state concentrations $y_1$ and $y_2$. Let's assume we want to fit this model to experimental data, but we don't know any of the parameter values which control the dynamics of the system.</p>
+<p>To solve for steady state solutions, we set both derivatives to zero to obtain the system</p>
+$$ 0 = a_{11}\bar{y}_1 + a_{12}\bar{y}_2 + b_1 $$$$ 0 = a_{21}\bar{y}_1 + a_{22}\bar{y}_2 + b_2 $$<p>whose solutions are</p>
+$$ \bar{y}_1 = \frac{a_{12}b_2 - a_{22}b_1}{a_{11}a_{22} - a_{12}a_{21}} $$$$ \bar{y}_2 = \frac{a_{21}b_1 - a_{11}b_2}{a_{11}a_{22} - a_{12}a_{21}} $$<p>This is a system of two equations in six unknowns, so even if we perform a series of repeated experiments on a single system of this form, obtaining measurements for $\bar{y}_1$ and $\bar{y}_2$, we will not be able to uniquely determine any of the values of the parameters underlying the system.</p>
+<p>Let's assume, however, that we can perform perturbations on the system which individually perturb the parameters $a_{11}$, $a_{22}$, $a_{12}$, and $a_{21}$ to $a_{11}'$, $a_{22}'$, $a_{12}'$, and $a_{21}'$, respectively. Let's also assume that we can apply these perturbations in arbitrary combinations.</p>
+<p>Now, counting all combinations of the perturbations, we have $2 + 4 \times 2 = 10$ unknowns but $2 \times (2^4) = 32$ equations (two for each possible combination of perturbations). Note that not all of these equations are necessarily linearly independent, so the system as a whole may still be underdetermined. Let's assume we are lazy and don't want to identify a smaller set of combinations of parameters which would yield a unique solution.</p>
+<p>To represent this system concisely we can think of the separate experiments as rows of a perturbation matrix $P$ and an outcome matrix $Y$ such that the steady state of the $i$th experiment obeys:</p>
+$$ y_{i,1} = \frac{(a_{12}p_{i,a_{12}} + a_{12}'p_{i,a_{12}'})b_2 - (a_{22}p_{i,a_{22}} + a_{22}'p_{i,a_{22}'})b_1}{(a_{11}p_{i,a_{11}} + a_{11}'p_{i,a_{11}'})(a_{22}p_{i,a_{22}} + a_{22}'p_{i,a_{22}'}) - (a_{12}p_{i,a_{12}} + a_{12}'p_{i,a_{12}'})(a_{21}p_{i,a_{21}} + a_{21}'p_{i,a_{21}'})} $$$$ y_{i,2} = \frac{(a_{21}p_{i,a_{21}} + a_{21}'p_{i,a_{21}'})b_1 - (a_{11}p_{i,a_{11}} + a_{11}'p_{i,a_{11}'})b_2}{(a_{11}p_{i,a_{11}} + a_{11}'p_{i,a_{11}'})(a_{22}p_{i,a_{22}} + a_{22}'p_{i,a_{22}'}) - (a_{12}p_{i,a_{12}} + a_{12}'p_{i,a_{12}'})(a_{21}p_{i,a_{21}} + a_{21}'p_{i,a_{21}'})} $$<p>where $p_{i,a_{11}} = 1$ and $p_{i,a_{11}'} = 0$ if the kinetics of the $i$th experiment are controlled by $a_{11}$, and $p_{i,a_{11}} = 0$ and $p_{i,a_{11}'} = 1$ if the kinetics of the $i$th experiment are controlled by $a_{11}'$.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">y_1</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="n">b_1</span><span class="p">,</span> <span class="n">b_2</span><span class="p">,</span> <span class="n">a_11</span><span class="p">,</span> <span class="n">a_11p</span><span class="p">,</span> <span class="n">a_22</span><span class="p">,</span> <span class="n">a_22p</span><span class="p">,</span> <span class="n">a_12</span><span class="p">,</span> <span class="n">a_12p</span><span class="p">,</span> <span class="n">a_21</span><span class="p">,</span> <span class="n">a_21p</span> <span class="o">=</span> <span class="n">theta</span>
+    <span class="k">return</span> <span class="p">(((</span><span class="n">a_12</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_12'</span><span class="p">]</span> <span class="o">+</span> <span class="n">a_12p</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_12p'</span><span class="p">])</span><span class="o">*</span><span class="n">b_2</span> <span class="o">-</span>
+             <span class="p">(</span><span class="n">a_22</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_22'</span><span class="p">]</span> <span class="o">+</span> <span class="n">a_22p</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_22p'</span><span class="p">])</span><span class="o">*</span><span class="n">b_1</span><span class="p">)</span> <span class="o">/</span>
+            <span class="p">((</span><span class="n">a_11</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_11'</span><span class="p">]</span> <span class="o">+</span> <span class="n">a_11p</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_11p'</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">a_22</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_22'</span><span class="p">]</span> <span class="o">+</span> <span class="n">a_22p</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_22p'</span><span class="p">])</span> <span class="o">-</span>
+             <span class="p">(</span><span class="n">a_12</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_12'</span><span class="p">]</span> <span class="o">+</span> <span class="n">a_12p</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_12p'</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">a_21</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_21'</span><span class="p">]</span> <span class="o">+</span> <span class="n">a_21p</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_21p'</span><span class="p">])))</span>
+  
+<span class="k">def</span> <span class="nf">y_2</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="n">b_1</span><span class="p">,</span> <span class="n">b_2</span><span class="p">,</span> <span class="n">a_11</span><span class="p">,</span> <span class="n">a_11p</span><span class="p">,</span> <span class="n">a_22</span><span class="p">,</span> <span class="n">a_22p</span><span class="p">,</span> <span class="n">a_12</span><span class="p">,</span> <span class="n">a_12p</span><span class="p">,</span> <span class="n">a_21</span><span class="p">,</span> <span class="n">a_21p</span> <span class="o">=</span> <span class="n">theta</span>
+    <span class="k">return</span> <span class="p">(((</span><span class="n">a_21</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_21'</span><span class="p">]</span> <span class="o">+</span> <span class="n">a_21p</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_21p'</span><span class="p">])</span><span class="o">*</span><span class="n">b_1</span> <span class="o">-</span>
+             <span class="p">(</span><span class="n">a_11</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_11'</span><span class="p">]</span> <span class="o">+</span> <span class="n">a_11p</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_11p'</span><span class="p">])</span><span class="o">*</span><span class="n">b_2</span><span class="p">)</span> <span class="o">/</span>
+            <span class="p">((</span><span class="n">a_11</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_11'</span><span class="p">]</span> <span class="o">+</span> <span class="n">a_11p</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_11p'</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">a_22</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_22'</span><span class="p">]</span> <span class="o">+</span> <span class="n">a_22p</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_22p'</span><span class="p">])</span> <span class="o">-</span>
+             <span class="p">(</span><span class="n">a_12</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_12'</span><span class="p">]</span> <span class="o">+</span> <span class="n">a_12p</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_12p'</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">a_21</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_21'</span><span class="p">]</span> <span class="o">+</span> <span class="n">a_21p</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'a_21p'</span><span class="p">])))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's assume we performed experiments for the following combinations of perturbations (all 16 unique combinations), represented as the following perturbation matrix $P$:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">p_str</span> <span class="o">=</span> <span class="s1">'''a_11	a_11p	a_12	a_12p	a_21	a_21p	a_22	a_22p</span>
+<span class="s1">1	0	1	0	1	0	1	0</span>
+<span class="s1">1	0	1	0	1	0	0	1</span>
+<span class="s1">1	0	1	0	0	1	1	0</span>
+<span class="s1">1	0	1	0	0	1	0	1</span>
+<span class="s1">1	0	0	1	1	0	1	0</span>
+<span class="s1">1	0	0	1	1	0	0	1</span>
+<span class="s1">1	0	0	1	0	1	1	0</span>
+<span class="s1">1	0	0	1	0	1	0	1</span>
+<span class="s1">0	1	1	0	1	0	1	0</span>
+<span class="s1">0	1	1	0	1	0	0	1</span>
+<span class="s1">0	1	1	0	0	1	1	0</span>
+<span class="s1">0	1	1	0	0	1	0	1</span>
+<span class="s1">0	1	0	1	1	0	1	0</span>
+<span class="s1">0	1	0	1	1	0	0	1</span>
+<span class="s1">0	1	0	1	0	1	1	0</span>
+<span class="s1">0	1	0	1	0	1	0	1</span>
+<span class="s1">'''</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">StringIO</span><span class="p">(</span><span class="n">p_str</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s1">'</span><span class="se">\t</span><span class="s1">'</span><span class="p">)</span>
+<span class="n">df</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead><tr style="text-align: right;">
+<th></th>
+      <th>a_11</th>
+      <th>a_11p</th>
+      <th>a_12</th>
+      <th>a_12p</th>
+      <th>a_21</th>
+      <th>a_21p</th>
+      <th>a_22</th>
+      <th>a_22p</th>
+    </tr></thead>
+<tbody>
+<tr>
+<th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+<tr>
+<th>1</th>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+<tr>
+<th>2</th>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+<tr>
+<th>3</th>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+<tr>
+<th>4</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+<tr>
+<th>5</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+<tr>
+<th>6</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+<tr>
+<th>7</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+<tr>
+<th>8</th>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+<tr>
+<th>9</th>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+<tr>
+<th>10</th>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+<tr>
+<th>11</th>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+<tr>
+<th>12</th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+<tr>
+<th>13</th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+<tr>
+<th>14</th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+<tr>
+<th>15</th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's simulate the results of these 16 experiments under the assumption that we know all the parameters. The easiest way to hand-pick guaranteed-physical (i.e., no negative steady state concentrations) is to force $a_{11}$ and $a_{22}$ to be negative and all other rates to be positive, and ensure that $a_{11}a_{22} &gt; a_{12}a_{21}$ for all perturbations.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">b_1</span> <span class="o">=</span> <span class="mf">5.</span>
+<span class="n">b_2</span> <span class="o">=</span> <span class="mf">8.</span>
+<span class="n">a_11</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.</span>
+<span class="n">a_11p</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.5</span>
+<span class="n">a_22</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.</span>
+<span class="n">a_22p</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.</span>
+<span class="n">a_12</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">a_12p</span> <span class="o">=</span> <span class="mf">0.25</span>
+<span class="n">a_21</span> <span class="o">=</span> <span class="mf">1.5</span>
+<span class="n">a_21p</span> <span class="o">=</span> <span class="mf">0.75</span>
+<span class="n">true_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">b_1</span><span class="p">,</span> <span class="n">b_2</span><span class="p">,</span> <span class="n">a_11</span><span class="p">,</span> <span class="n">a_11p</span><span class="p">,</span> <span class="n">a_22</span><span class="p">,</span> <span class="n">a_22p</span><span class="p">,</span> <span class="n">a_12</span><span class="p">,</span> <span class="n">a_12p</span><span class="p">,</span> <span class="n">a_21</span><span class="p">,</span> <span class="n">a_21p</span><span class="p">])</span>
+
+<span class="n">df</span><span class="p">[</span><span class="s1">'y_1'</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_1</span><span class="p">(</span><span class="n">true_theta</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'y_2'</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_2</span><span class="p">(</span><span class="n">true_theta</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
+<span class="n">df</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead><tr style="text-align: right;">
+<th></th>
+      <th>a_11</th>
+      <th>a_11p</th>
+      <th>a_12</th>
+      <th>a_12p</th>
+      <th>a_21</th>
+      <th>a_21p</th>
+      <th>a_22</th>
+      <th>a_22p</th>
+      <th>y_1</th>
+      <th>y_2</th>
+    </tr></thead>
+<tbody>
+<tr>
+<th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1.703242</td>
+      <td>2.948070</td>
+    </tr>
+<tr>
+<th>1</th>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>2.612282</td>
+      <td>5.908038</td>
+    </tr>
+<tr>
+<th>2</th>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1.895743</td>
+      <td>1.883437</td>
+    </tr>
+<tr>
+<th>3</th>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>2.153835</td>
+      <td>5.004029</td>
+    </tr>
+<tr>
+<th>4</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1.682975</td>
+      <td>2.437376</td>
+    </tr>
+<tr>
+<th>5</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>2.058915</td>
+      <td>5.685188</td>
+    </tr>
+<tr>
+<th>6</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1.685706</td>
+      <td>2.720532</td>
+    </tr>
+<tr>
+<th>7</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>2.525622</td>
+      <td>5.051438</td>
+    </tr>
+<tr>
+<th>8</th>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>4.776790</td>
+      <td>3.790322</td>
+    </tr>
+<tr>
+<th>9</th>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>5.790815</td>
+      <td>8.934292</td>
+    </tr>
+<tr>
+<th>10</th>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>4.642860</td>
+      <td>2.683710</td>
+    </tr>
+<tr>
+<th>11</th>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>5.621038</td>
+      <td>5.963502</td>
+    </tr>
+<tr>
+<th>12</th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>3.971108</td>
+      <td>3.185330</td>
+    </tr>
+<tr>
+<th>13</th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>4.769787</td>
+      <td>6.861420</td>
+    </tr>
+<tr>
+<th>14</th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>3.532869</td>
+      <td>2.622865</td>
+    </tr>
+<tr>
+<th>15</th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>4.373478</td>
+      <td>6.289329</td>
+    </tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To fit the model, we can define a least-squares loss function:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">loss</span><span class="p">(</span><span class="n">theta</span><span class="p">):</span>
+    <span class="n">y_1_pred</span> <span class="o">=</span> <span class="n">y_1</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+    <span class="n">y_2_pred</span> <span class="o">=</span> <span class="n">y_2</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">y_1_pred</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s1">'y_1'</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">y_2_pred</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s1">'y_2'</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and then optimize it, starting from 10 random guesses with realistic sign choices:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">best_loss</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">best_res</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">bounds</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.1</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[(</span><span class="kc">None</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)]</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="p">[(</span><span class="mf">0.1</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span> <span class="o">*</span> <span class="mi">4</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'.'</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span>
+    <span class="n">theta_0</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">theta_0</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">)</span>
+    <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">best_loss</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">current_loss</span> <span class="o">&lt;</span> <span class="n">best_loss</span><span class="p">:</span>
+        <span class="n">best_loss</span> <span class="o">=</span> <span class="n">current_loss</span>
+        <span class="n">best_res</span> <span class="o">=</span> <span class="n">res</span>
+<span class="k">assert</span> <span class="n">best_res</span><span class="o">.</span><span class="n">success</span>
+<span class="n">best_res</span><span class="o">.</span><span class="n">x</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>..........</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([ 3.33944912,  2.88261337, -2.05303739, -0.95275651, -1.44130753,
+       -0.68793415,  0.29705419,  0.13598028,  0.4861968 ,  0.26241915])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This isn't equal to our ground truth parameters, but we can check that it does fit the observed data well (loss after optimization is comparable to the loss given the true theta).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">best_loss</span><span class="p">,</span> <span class="n">loss</span><span class="p">(</span><span class="n">true_theta</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(2.314423460881202, 2.7534257619649787)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Therefore, the discrepancy between our fitted parameters and the ground truth parameters is probably due to the fact that the system of equations is not linearly independent.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If the simple optimizer we invoked above was having trouble with local minima in the loss function, we could have tried to fit our model using simulated annealing, but this would take a lot longer and would not lead to a significant improvement in the loss for this particular toy problem:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#from scipy.optimize import basinhopping</span>
+<span class="c1">#res_bh = basinhopping(loss, theta_0)</span>
+<span class="c1">#res_bh.x, loss(res_bh.x)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Finally, we can plot the degree of agreement between our fitted model and the experimental results:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s1">'y_1'</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">'experimental y_1'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'r'</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">'+'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s1">'y_2'</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">'experimental y_2'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'b'</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">'+'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">y_1</span><span class="p">(</span><span class="n">best_res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">df</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">'model y_1'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'r'</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">'x'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">y_2</span><span class="p">(</span><span class="n">best_res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">df</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">'model y_2'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'b'</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">'x'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'experiment number'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'steady-state concentration'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">'center left'</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../categories/biochemisty/" rel="tag">biochemisty</a></li>
+            <li><a class="tag p-category" href="../../categories/enzyme-kinetics/" rel="tag">enzyme kinetics</a></li>
+            <li><a class="tag p-category" href="../../categories/notebook/" rel="tag">notebook</a></li>
+            <li><a class="tag p-category" href="../../categories/optimization/" rel="tag">optimization</a></li>
+            <li><a class="tag p-category" href="../../categories/python/" rel="tag">Python</a></li>
+        </ul>
+<ul class="pager hidden-print">
+<li class="previous">
+                <a href="../biochemical-kinetics-reaction-velocities/" rel="prev" title="Fitting a Michaelis-Menten model to biochemical kinetics data">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../dota-hero-embedding/" rel="next" title="Creating Dota 2 hero embeddings with Word2vec">Next post</a>
+            </li>
+        </ul></nav></aside><section class="comments hidden-print"><h2>Comments</h2>
+        
+        
+        <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="gilgi-blog",
+            disqus_url="https://gilgi.org/blog/biochemical-kinetics-steady-state-combinations/",
+        disqus_title="Estimating enzyme kinetics parameters from steady-state observations",
+        disqus_identifier="cache/posts/biochemical_kinetics_steady_state_combinations.html",
+        disqus_config = function () {
+            this.language = "en";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+        </section><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha384-3lJUsx1TJHt7BA4udB5KPnDrlkO8T6J6v/op7ui0BbCjvZ9WqV4Xm6DTP6kQ/iBH" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script></article><script>var disqus_shortname="gilgi-blog";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script><!--End of body content--><footer id="footer">
+            Contents © 2019         <a href="mailto:site@gilgi.org">gilgi</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+            
+        </footer>
+</div>
+</div>
+
+
+        <script src="../../assets/js/all-nocdn.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

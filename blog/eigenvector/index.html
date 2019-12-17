@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#
+" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>First eigenvector vs principle component of a symmetric matrix  | gilgi.org</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/ipython.min.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/nikola_ipython.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../../rss.xml">
+<link rel="canonical" href="https://gilgi.org/blog/eigenvector/">
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script><!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="gilgi">
+<link rel="prev" href="../dotafriends/" title="Dota 2 friend network visualization" type="text/html">
+<link rel="next" href="../optimal-bh-fdr-control/" title="Optimal BH-FDR control" type="text/html">
+<meta property="og:site_name" content="gilgi.org">
+<meta property="og:title" content="First eigenvector vs principle component of a symmetric matrix ">
+<meta property="og:url" content="https://gilgi.org/blog/eigenvector/">
+<meta property="og:description" content="Two concepts that are easy to confuse are eigenvectors and principle components. When the matrix in question is symmetric, there is a relationship between the first eigenvector and the projection of t">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-10-13T00:00:00-04:00">
+<meta property="article:tag" content="linear algebra">
+<meta property="article:tag" content="notebook">
+<meta property="article:tag" content="Python">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-expand-md static-top mb-4
+navbar-dark bg-dark
+"><div class="container">
+<!-- This keeps the margins nice -->
+        <a class="navbar-brand" href="https://gilgi.org/">
+
+            <span id="blog-title">gilgi.org</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="bs-navbar">
+            <ul class="navbar-nav mr-auto">
+<li class="nav-item">
+<a href="../../research/" class="nav-link">Research</a>
+                </li>
+<li class="nav-item">
+<a href="../../code/" class="nav-link">Code</a>
+                </li>
+<li class="nav-item">
+<a href="../" class="nav-link">Blog</a>
+                </li>
+<li class="nav-item">
+<a href="../../categories/" class="nav-link">Tags</a>
+                </li>
+<li class="nav-item">
+<a href="../../archive/" class="nav-link">Archive</a>
+                </li>
+<li class="nav-item">
+<a href="http://status.gilgi.org" class="nav-link">Network Status</a>
+
+                
+            </li>
+</ul>
+<!-- Google custom search --><form method="get" action="https://www.google.com/search" class="navbar-form navbar-right" role="search" _lpchecked="1">
+<input type="text" name="q" class="form-control" placeholder="Search"><input type="hidden" name="sitesearch" value="https://gilgi.org/">
+</form>
+<!-- End of custom search -->
+
+
+            <ul class="navbar-nav navbar-right">
+<li class="nav-item">
+    <a href="index.ipynb" id="sourcelink" class="nav-link">Source</a>
+    </li>
+
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        
+        
+        
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">First eigenvector vs principle component of a symmetric matrix </a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
+                    gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="." rel="bookmark">
+            <time class="published dt-published" datetime="2019-10-13T00:00:00-04:00" itemprop="datePublished" title="2019-10-13">2019-10-13</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="#disqus_thread" data-disqus-identifier="cache/posts/eigenvector.html">Comments</a>
+
+
+            
+        </p>
+<p class="sourceline"><a href="index.ipynb" class="sourcelink">Source</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Two concepts that are easy to confuse are <a href="https://en.wikipedia.org/wiki/Eigenvalues_and_eigenvectors">eigenvectors</a> and <a href="https://en.wikipedia.org/wiki/Principal_component_analysis">principle components</a>. When the matrix in question is symmetric, there is a relationship between the first eigenvector and the projection of the data onto its first principle component. In this post, we'll use <a href="https://en.wikipedia.org/wiki/Diagonalizable_matrix#Diagonalization">diagonalization</a> and <a href="https://en.wikipedia.org/wiki/Singular_value_decomposition">singular value decomposition</a> to try to shed some light on this.</p>
+<p><a href="https://colab.research.google.com/drive/1Qtzk8tt_CJ0tHNmQIun_ytem6eGXZLdz"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<!-- TEASER_END -->
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Set random seed for reproducibility.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Make a symmetric matrix $A$ which represents the contact matrix. This is typically made from $\frac{\textrm{observed}}{\textrm{1-D expected}}$ data but for this demo it doesn't matter. For simplicity we will make sure the row and column means are zero to avoid running into questions about whether or not PCA should perform an extra centering step.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">a</span> <span class="o">+=</span> <span class="n">a</span><span class="o">.</span><span class="n">T</span>
+<span class="n">a</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+<span class="n">a</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="n">a</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[-0.66845153,  2.26173989, -0.07248698, -1.52080138],
+       [ 2.26173989, -0.84507574,  0.68300369, -2.09966784],
+       [-0.07248698,  0.68300369, -0.89935823,  0.28884153],
+       [-1.52080138, -2.09966784,  0.28884153,  3.33162769]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Make the covariance matrix of the contact matrix $C=AA^T=A^TA$. Each entry $C_{i,j}$ describes the covariance between the interaction pattern of the $i$th bin $A_{i,:}$ and the interaction pattern of the $j$th bin $A_{j,:}$. <code>np.cov()</code> scales the covariance matrix by dividing it by $N-1$.</p>
+$$
+%Make the Pearson correlation matrix of the contact matrix. Each entry $C_{i,j}$ describes how correlated the interaction pattern of the $i$th bin $A_{i,:}$ is with the interaction pattern of the $j$th bin $A_{j,:}$.
+$$
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#c = a @ a.T</span>
+<span class="c1">#assert np.allclose(c, np.cov(a)*(a.shape[0] - 1))</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="n">c</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[ 1.        , -0.03043523,  0.37185465, -0.74252732],
+       [-0.03043523,  1.        , -0.51341948, -0.61132217],
+       [ 0.37185465, -0.51341948,  1.        , -0.12572149],
+       [-0.74252732, -0.61132217, -0.12572149,  1.        ]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Perform PCA on $A$, then project the data onto the first principle component. Scale this projected representation to unit length (since the units on the PC1 axis are arbitrary anyway).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">()</span>
+<span class="n">pca_proj</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">c</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">norm_pca_proj</span> <span class="o">=</span> <span class="n">pca_proj</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pca_proj</span><span class="p">)</span>
+<span class="n">norm_pca_proj</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([-0.47695205, -0.35476371,  0.02805388,  0.80366189])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Check the vector that describes the first principle component.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pc1</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">components_</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+<span class="n">pc1</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([-0.54655655, -0.43931021, -0.03541597,  0.71205911])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>PCA identifies the principle components as the eigenvectors of the covariance matrix. <code>np.linalg.eig()</code> performs the eigendecomposition of $C$ into a diagonal matrix of eigenvalues $\Lambda$ and a matrix of eigenvectors $Q$ such that</p>
+$$C=Q \Lambda Q^{-1}$$<p>where $Q_{:, i}$ is the $i$th eigenvector, associated with the $i$th eigenvalue $\Lambda_{i,i}$.</p>
+<p>In the code, <code>eigvals</code> is the diagonal of $\Lambda$ and is therefore a vector of the eigenvalues. <code>q</code> is $Q$ and is therefore the matrix of the eigenvectors. The eigenvalues can be in any order, but we are only interested in the largest one, which represents the first principle component.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
+<span class="n">eigvals</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">d</span> <span class="o">@</span> <span class="n">d</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="n">top_eigval_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigvals</span><span class="p">))</span>
+<span class="n">top_eigvec</span> <span class="o">=</span> <span class="n">q</span><span class="p">[:,</span> <span class="n">top_eigval_idx</span><span class="p">]</span>
+<span class="n">top_eigvec</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([ 0.54655655,  0.43931021,  0.03541597, -0.71205911])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">e</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
+<span class="n">e</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
+<span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">((</span><span class="n">e</span> <span class="o">@</span> <span class="n">e</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">/</span><span class="n">e</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Another way to implement PCA is to compute the SVD of $A$, which decomposes $A$ into a diagonal matrix of singular values $\Sigma$, an orthogonal matrix of right singular vectors $V$, and an orthogonal matrix of left singular vectors $U$ such that</p>
+$$A=U \Sigma V^T$$<p>We can then write the covariance matrix $C$ in terms of these singular values and vectors</p>
+\begin{align}
+C &amp;= A^TA \\
+&amp;= (U \Sigma V^T)^T(U \Sigma V^T) \\
+&amp;= V \Sigma U^T U \Sigma V^T \\
+&amp;= V \Sigma \Sigma V^T \quad \textrm{because }U\textrm{ is orthogonal}\\
+&amp;= V \Sigma^2 V^T \\
+\end{align}<p>Since $A$ is symmetric, we could equivalently have written its covariance matrix as $C=AA^T$ to obtain</p>
+\begin{align}
+C &amp;= AA^T \\
+&amp;= (U \Sigma V^T)(U \Sigma V^T)^T \\
+&amp;= U \Sigma V^T V \Sigma U^T \\
+&amp;= U \Sigma \Sigma U^T \quad \textrm{because }V\textrm{ is orthogonal}\\
+&amp;= U \Sigma^2 U^T \\
+\end{align}<p>Since the diagonalization of a matrix is unique (assuming we make all the eigenvalues positive and order them from largest to smallest and ignoring the possibility of degenerate eigenvalues), we can see that $Q=V=U$ and $\Lambda=\Sigma^2$.</p>
+<p>This means that we can obtain the first princple component of $A$ by computing its SVD and taking the right singular vector in $V$ with the largest singular value.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">u</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">vt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">vt</span><span class="o">.</span><span class="n">T</span>
+<span class="n">top_sv_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+<span class="n">top_right_singvec</span> <span class="o">=</span> <span class="n">v</span><span class="p">[:,</span> <span class="n">top_sv_idx</span><span class="p">]</span>
+<span class="n">top_left_singvec</span> <span class="o">=</span> <span class="n">u</span><span class="p">[:,</span> <span class="n">top_sv_idx</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">top_right_singvec</span><span class="p">,</span> <span class="n">top_left_singvec</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">top_right_singvec</span><span class="p">,</span> <span class="o">-</span><span class="n">top_left_singvec</span><span class="p">)</span>
+<span class="n">top_right_singvec</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([ 0.44819699, -0.49072754, -0.50665589,  0.54918644])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As expected, the first principle component <code>pc1</code> of $A$ is the same as the first eigenvector (the eigenvector corresponding to the largest eigenvalue) of the covariance matrix $C$, and is also equal to the first right singular vector of $A$.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">top_eigvec</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="o">-</span><span class="n">top_eigvec</span><span class="p">),</span>\
+<span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="n">top_right_singvec</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">pc1</span><span class="p">,</span> <span class="o">-</span><span class="n">top_right_singvec</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(False, True)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>What is perhaps less expected is that the projection of the data onto the first principle component is also equal to this first eigenvector.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">norm_pca_proj</span><span class="p">,</span> <span class="n">top_eigvec</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">norm_pca_proj</span><span class="p">,</span> <span class="o">-</span><span class="n">top_eigvec</span><span class="p">),</span>\
+<span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">norm_pca_proj</span><span class="p">,</span> <span class="n">top_right_singvec</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">norm_pca_proj</span><span class="p">,</span> <span class="o">-</span><span class="n">top_right_singvec</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(False, True)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can check this by projecting the data $A$ onto the subspace spanned by the principle components (which we can find in $Q$, $V$, or $U$):</p>
+\begin{align}
+A_\textrm{proj} &amp;= AV \\
+&amp;= U\Sigma V^T V \quad \textrm{plug in SVD of }A \\
+&amp;= U\Sigma \quad \textrm{because }V\textrm{ is orthogonal}
+\end{align}<p>As we noted above, $Q=V=U$, so the projection is just the eigenvector scaled by its associated singular value. In other words, the projection of the data in $A$ onto the first principle component of $A$ is just the first principle component of $A$ scaled by the first singular value of $A$.</p>
+<p>If $A$ was not symmetric, we would still have $V=Q$ (SVD is still a valid way to perform PCA) but $V\neq U$ and therefore the projection of $A$ onto the first principle component would not be equal to the first eigenvector.</p>
+
+</div>
+</div>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../categories/linear-algebra/" rel="tag">linear algebra</a></li>
+            <li><a class="tag p-category" href="../../categories/notebook/" rel="tag">notebook</a></li>
+            <li><a class="tag p-category" href="../../categories/python/" rel="tag">Python</a></li>
+        </ul>
+<ul class="pager hidden-print">
+<li class="previous">
+                <a href="../dotafriends/" rel="prev" title="Dota 2 friend network visualization">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../optimal-bh-fdr-control/" rel="next" title="Optimal BH-FDR control">Next post</a>
+            </li>
+        </ul></nav></aside><section class="comments hidden-print"><h2>Comments</h2>
+        
+        
+        <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="gilgi-blog",
+            disqus_url="https://gilgi.org/blog/eigenvector/",
+        disqus_title="First eigenvector vs principle component of a symmetric matrix ",
+        disqus_identifier="cache/posts/eigenvector.html",
+        disqus_config = function () {
+            this.language = "en";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+        </section><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha384-3lJUsx1TJHt7BA4udB5KPnDrlkO8T6J6v/op7ui0BbCjvZ9WqV4Xm6DTP6kQ/iBH" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script></article><script>var disqus_shortname="gilgi-blog";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script><!--End of body content--><footer id="footer">
+            Contents © 2019         <a href="mailto:site@gilgi.org">gilgi</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+            
+        </footer>
+</div>
+</div>
+
+
+        <script src="../../assets/js/all-nocdn.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

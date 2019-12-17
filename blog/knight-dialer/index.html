@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#
+" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Partially solving the "knight dialer" problem using graph exploration | gilgi.org</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/ipython.min.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/nikola_ipython.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../../rss.xml">
+<link rel="canonical" href="https://gilgi.org/blog/knight-dialer/">
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script><!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="gilgi">
+<link rel="prev" href="../autochess/" title="Visualizing trajectories of Dota Auto Chess games using LDA and TSNE" type="text/html">
+<link rel="next" href="../poisson-rate-estimation-variance/" title="Estimation variance of the Poisson rate parameter" type="text/html">
+<meta property="og:site_name" content="gilgi.org">
+<meta property="og:title" content='Partially solving the "knight dialer" problem using graph exploration'>
+<meta property="og:url" content="https://gilgi.org/blog/knight-dialer/">
+<meta property="og:description" content="This week, a friend showed me the knight dialer coding problem. As usual, I couldn't resist framing it as a graph exploration problem - read on to see how I tackled it.
+
+
+
+
+
+
+
+In [0]:
+
+    
+import ite">
+<meta property="og:image" content="https://gilgi.org/blog/knight-dialer/images/blog/knight-dialer.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-06-20T00:00:00-04:00">
+<meta property="article:tag" content="coding problem">
+<meta property="article:tag" content="graph">
+<meta property="article:tag" content="notebook">
+<meta property="article:tag" content="Python">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-expand-md static-top mb-4
+navbar-dark bg-dark
+"><div class="container">
+<!-- This keeps the margins nice -->
+        <a class="navbar-brand" href="https://gilgi.org/">
+
+            <span id="blog-title">gilgi.org</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="bs-navbar">
+            <ul class="navbar-nav mr-auto">
+<li class="nav-item">
+<a href="../../research/" class="nav-link">Research</a>
+                </li>
+<li class="nav-item">
+<a href="../../code/" class="nav-link">Code</a>
+                </li>
+<li class="nav-item">
+<a href="../" class="nav-link">Blog</a>
+                </li>
+<li class="nav-item">
+<a href="../../categories/" class="nav-link">Tags</a>
+                </li>
+<li class="nav-item">
+<a href="../../archive/" class="nav-link">Archive</a>
+                </li>
+<li class="nav-item">
+<a href="http://status.gilgi.org" class="nav-link">Network Status</a>
+
+                
+            </li>
+</ul>
+<!-- Google custom search --><form method="get" action="https://www.google.com/search" class="navbar-form navbar-right" role="search" _lpchecked="1">
+<input type="text" name="q" class="form-control" placeholder="Search"><input type="hidden" name="sitesearch" value="https://gilgi.org/">
+</form>
+<!-- End of custom search -->
+
+
+            <ul class="navbar-nav navbar-right">
+<li class="nav-item">
+    <a href="index.ipynb" id="sourcelink" class="nav-link">Source</a>
+    </li>
+
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        
+        
+        
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Partially solving the "knight dialer" problem using graph exploration</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
+                    gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="." rel="bookmark">
+            <time class="published dt-published" datetime="2019-06-20T00:00:00-04:00" itemprop="datePublished" title="2019-06-20">2019-06-20</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="#disqus_thread" data-disqus-identifier="cache/posts/knight_dialer.html">Comments</a>
+
+
+            
+        </p>
+<p class="sourceline"><a href="index.ipynb" class="sourcelink">Source</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../../images/blog/knight-dialer.png" alt=""></p>
+<p>This week, a friend showed me the <a href="https://leetcode.com/problems/knight-dialer/">knight dialer coding problem</a>. As usual, I couldn't resist framing it as a graph exploration problem - read on to see how I tackled it.</p>
+<p><a href="https://colab.research.google.com/drive/1eJ1GHt4YTn4n65TrUxQBXwJOfFoK0gMd"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<!-- TEASER_END -->
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The keypad looks like this:</p>
+
+<pre><code>1 2 3
+4 5 6
+7 8 9
+  0</code></pre>
+<p>We will mark the "redacted" pound and star keys with -1's so that we know they aren't real keys.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">keypad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span> <span class="mi">1</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">3</span><span class="p">],</span>
+                   <span class="p">[</span> <span class="mi">4</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>  <span class="mi">6</span><span class="p">],</span>
+                   <span class="p">[</span> <span class="mi">7</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">9</span><span class="p">],</span>
+                   <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">keypad</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[ 1,  2,  3],
+       [ 4,  5,  6],
+       [ 7,  8,  9],
+       [-1,  0, -1]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here are all all 8 jumps a knight can make as vectors:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">jumps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span>
+    <span class="nb">sum</span><span class="p">,</span>
+    <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">])],</span>
+                      <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])])))</span> <span class="o">+</span> \
+    <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span>
+        <span class="nb">sum</span><span class="p">,</span>
+        <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">])],</span>
+                          <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])])))</span>
+<span class="n">jumps</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[array([1, 2]),
+ array([-1,  2]),
+ array([ 1, -2]),
+ array([-1, -2]),
+ array([2, 1]),
+ array([ 2, -1]),
+ array([-2,  1]),
+ array([-2, -1])]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can construct a graph where the nodes are keys and the edges link two nodes that a knight could jump between in a single hop.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">keypad</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">keypad</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="c1"># these aren't real nodes</span>
+        <span class="k">if</span> <span class="n">keypad</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># this is the new key we are adding to the graph</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">keypad</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+        <span class="n">graph</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># check each of a knight's 8 possible jumps</span>
+        <span class="k">for</span> <span class="n">jump</span> <span class="ow">in</span> <span class="n">jumps</span><span class="p">:</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span> <span class="o">+</span> <span class="n">jump</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">target</span> <span class="o">&lt;</span> <span class="n">keypad</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">target</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> \
+                    <span class="ow">and</span> <span class="n">keypad</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">target</span><span class="p">)]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">graph</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">keypad</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">target</span><span class="p">)])</span>
+<span class="n">graph</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{0: [6, 4],
+ 1: [6, 8],
+ 2: [9, 7],
+ 3: [4, 8],
+ 4: [9, 3, 0],
+ 5: [],
+ 6: [7, 1, 0],
+ 7: [6, 2],
+ 8: [3, 1],
+ 9: [4, 2]}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The degree of each node/key is 2, except for the 5 key (no jumps possible) and the 4 and 6 keys (extra jump to the 0 key). If they were all 2, we could write the number of unique dials as</p>
+$$K\times 2^N$$<p>where $K = 10$ is the number of starting keys, $N$ is the number of jumps, and $2$ is the number of choices for each jump.</p>
+<p>The question technically asks for the number of unique dials possible from a given starting position, which would just be</p>
+$$2^N$$
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Unfortunately, since the degrees aren't actually all 2, we need a different plan. One simple idea is to use brute force: for a given initial key, we can unroll our directed cyclic graph into a tree rooted at the initial key and count the leaves at depth $N$. We can track the nodes of the tree according to the list of graph nodes (individual keys) they passed through (from the root to the leaf, in order). We technically don't need to track the identities of the leaves (since the problem asks us only to count the number of dialable numbers, not list them) but it will be more fun this way because we will get to see the numbers being dialed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">find_leaves</span><span class="p">(</span><span class="n">initial_key</span><span class="p">,</span> <span class="n">num_jumps</span><span class="p">):</span>
+    <span class="n">leaves</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">def</span> <span class="nf">explore</span><span class="p">(</span><span class="n">current_node</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">depth</span> <span class="o">==</span> <span class="n">num_jumps</span><span class="p">:</span>
+            <span class="n">leaves</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_node</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">adjacent_key</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">current_node</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]:</span>
+                <span class="n">explore</span><span class="p">(</span><span class="n">current_node</span> <span class="o">+</span> <span class="p">[</span><span class="n">adjacent_key</span><span class="p">],</span> <span class="n">depth</span><span class="o">=</span><span class="n">depth</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">explore</span><span class="p">([</span><span class="n">initial_key</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">leaves</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For example, we can check how many numbers we can dial taking $N = 3$ jumps starting from initial key 2:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">leaves</span> <span class="o">=</span> <span class="n">find_leaves</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">leaves</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">x</span><span class="p">)),</span> <span class="n">leaves</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(10,
+ ['2949',
+  '2943',
+  '2940',
+  '2929',
+  '2927',
+  '2767',
+  '2761',
+  '2760',
+  '2729',
+  '2727'])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can do some sanity checks here:</p>
+<ol>
+<li>All the dialed numbers start with 2, the initial key.</li>
+<li>The first branch of the tree chooses between jumping from to 9 or to 7, which are the two legal jumps from 2.</li>
+<li>The second branch can always jump back to the initial key, leading to substrings like "292" and "272". This makes sense because a knight can always jump back to the square it came from.</li>
+<li>The third branch correctly accounts for the extra degree of the 4 and 6 keys, since we see three dialed numbers starting with "294" or "276" but only two dialed numbers starting with "272" or "292".</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can also check that all the dialed numbers are really unique:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">leaves</span> <span class="o">=</span> <span class="n">find_leaves</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">pretty_leaves</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">x</span><span class="p">)),</span> <span class="n">leaves</span><span class="p">))</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">pretty_leaves</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">pretty_leaves</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can also check an edge case: we shouldn't be able to dial any number starting from 5 except when $N=0$:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">leaves</span> <span class="o">=</span> <span class="n">find_leaves</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">leaves</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">x</span><span class="p">)),</span> <span class="n">leaves</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(0, [])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">leaves</span> <span class="o">=</span> <span class="n">find_leaves</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">leaves</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">x</span><span class="p">)),</span> <span class="n">leaves</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(1, ['5'])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can also get a sense for the scalability of the algorithm we're using.</p>
+<p>We expect the algorithm to be linear in the number of nodes visited, and since at least every leaf is visited and we can expect between $2^N$ and $3^N$ leaves, the overall runtime is exponential in the number of jumps.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="o">%%capture</span>
+<span class="n">depths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">times</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">depths</span><span class="p">:</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="o">%</span><span class="n">timeit</span> <span class="o">-</span><span class="n">o</span> <span class="n">find_leaves</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+    <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">best</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">depths</span><span class="p">,</span> <span class="n">times</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'number of jumps'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'time (s)'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">'log'</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For practical use cases, phone numbers are only about 10 digits long, so $N$ is relatively small and the overall runtime is still acceptable despite this poor scaling.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="o">%</span><span class="k">time</span> leaves = find_leaves(3, 10)
+<span class="nb">len</span><span class="p">(</span><span class="n">leaves</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">x</span><span class="p">)),</span> <span class="n">leaves</span><span class="p">))[:</span><span class="mi">5</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Wall time: 6 ms
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(3728,
+ ['34949494949', '34949494943', '34949494940', '34949494929', '34949494927'])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It's probably possible to improve the runtime further at the expense of not being able to list the generated numbers (e.g., using memoization to avoid repeated re-exploration of "equivalent" nodes of the tree, saving only the total number of unique dialable numbers), but given the short length of typical phone numbers and the potential extra utility of an implementation that also lists the dialable numbers, we will stop here.</p>
+
+</div>
+</div>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../categories/coding-problem/" rel="tag">coding problem</a></li>
+            <li><a class="tag p-category" href="../../categories/graph/" rel="tag">graph</a></li>
+            <li><a class="tag p-category" href="../../categories/notebook/" rel="tag">notebook</a></li>
+            <li><a class="tag p-category" href="../../categories/python/" rel="tag">Python</a></li>
+        </ul>
+<ul class="pager hidden-print">
+<li class="previous">
+                <a href="../autochess/" rel="prev" title="Visualizing trajectories of Dota Auto Chess games using LDA and TSNE">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../poisson-rate-estimation-variance/" rel="next" title="Estimation variance of the Poisson rate parameter">Next post</a>
+            </li>
+        </ul></nav></aside><section class="comments hidden-print"><h2>Comments</h2>
+        
+        
+        <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="gilgi-blog",
+            disqus_url="https://gilgi.org/blog/knight-dialer/",
+        disqus_title="Partially solving the \"knight dialer\" problem using graph exploration",
+        disqus_identifier="cache/posts/knight_dialer.html",
+        disqus_config = function () {
+            this.language = "en";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+        </section><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha384-3lJUsx1TJHt7BA4udB5KPnDrlkO8T6J6v/op7ui0BbCjvZ9WqV4Xm6DTP6kQ/iBH" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script></article><script>var disqus_shortname="gilgi-blog";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script><!--End of body content--><footer id="footer">
+            Contents © 2019         <a href="mailto:site@gilgi.org">gilgi</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+            
+        </footer>
+</div>
+</div>
+
+
+        <script src="../../assets/js/all-nocdn.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

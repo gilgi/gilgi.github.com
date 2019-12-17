@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#
+" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="official blog of the gilgi.org network">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>gilgi.org (old posts, page 1) | gilgi.org</title>
+<link href="../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/ipython.min.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/nikola_ipython.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
+<link rel="canonical" href="https://gilgi.org/blog/index-1.html">
+<link rel="prev" href="." type="text/html">
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script><!--[if lt IE 9]><script src="../assets/js/html5.js"></script><![endif]-->
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-expand-md static-top mb-4
+navbar-dark bg-dark
+"><div class="container">
+<!-- This keeps the margins nice -->
+        <a class="navbar-brand" href="https://gilgi.org/">
+
+            <span id="blog-title">gilgi.org</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="bs-navbar">
+            <ul class="navbar-nav mr-auto">
+<li class="nav-item">
+<a href="../research/" class="nav-link">Research</a>
+                </li>
+<li class="nav-item">
+<a href="../code/" class="nav-link">Code</a>
+                </li>
+<li class="nav-item">
+<a href="." class="nav-link">Blog</a>
+                </li>
+<li class="nav-item">
+<a href="../categories/" class="nav-link">Tags</a>
+                </li>
+<li class="nav-item">
+<a href="../archive/" class="nav-link">Archive</a>
+                </li>
+<li class="nav-item">
+<a href="http://status.gilgi.org" class="nav-link">Network Status</a>
+
+                
+            </li>
+</ul>
+<!-- Google custom search --><form method="get" action="https://www.google.com/search" class="navbar-form navbar-right" role="search" _lpchecked="1">
+<input type="text" name="q" class="form-control" placeholder="Search"><input type="hidden" name="sitesearch" value="https://gilgi.org/">
+</form>
+<!-- End of custom search -->
+
+
+            <ul class="navbar-nav navbar-right"></ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        
+        
+        
+
+    
+
+
+    
+<div class="postindex">
+    <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="dota-hero-embedding/" class="u-url">Creating Dota 2 hero embeddings with Word2vec</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="dota-hero-embedding/" rel="bookmark">
+            <time class="published dt-published" datetime="2018-05-27T00:00:00-04:00" itemprop="datePublished" title="2018-05-27">2018-05-27</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="dota-hero-embedding/#disqus_thread" data-disqus-identifier="cache/posts/dota_hero_embedding.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../images/blog/dota-hero-embedding.png" alt=""></p>
+<p>One of the coolest results in natural language processing is the success of word embedding models like <a href="https://en.wikipedia.org/wiki/Word2vec">Word2vec</a>. These models are able to extract rich semantic information from words using surprisingly simple models like <a href="https://en.wikipedia.org/wiki/Bag-of-words_model#CBOW">CBOW</a> or <a href="https://en.wikipedia.org/wiki/N-gram#Skip-gram">skip-gram</a>. What if we could use these generic modelling strategies to learn embeddings for something completely different - say, Dota 2 heroes.</p>
+<p>In this post, we'll use the <a href="https://docs.opendota.com/">OpenDota API</a> to collect data from professional Dota 2 matches and use <a href="https://keras.io/">Keras</a> to train a Word2vec-like model for hero embeddings.</p>
+<p><a href="https://drive.google.com/file/d/1V2BY-FkYRTEK6L335cBvGCkpvh8sU7_R/view?usp=sharing"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p class="more"><a href="dota-hero-embedding/">Read more…</a></p>
+</div>
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="biochemical-kinetics-steady-state-combinations/" class="u-url">Estimating enzyme kinetics parameters from steady-state observations</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="biochemical-kinetics-steady-state-combinations/" rel="bookmark">
+            <time class="published dt-published" datetime="2018-01-12T00:00:00-05:00" itemprop="datePublished" title="2018-01-12">2018-01-12</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="biochemical-kinetics-steady-state-combinations/#disqus_thread" data-disqus-identifier="cache/posts/biochemical_kinetics_steady_state_combinations.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../images/blog/biochemical-kinetics-steady-state-combinations.png" alt=""></p>
+<p>In <a href="biochemical-kinetics-reaction-velocities">yesterday's post</a>, we did some simple fitting of a <a href="https://en.wikipedia.org/wiki/Enzyme_kinetics#Michaelis%E2%80%93Menten_kinetics">Michaelis-Menten enzyme kinetics model</a> for a single step of an isolated reaction. What happens when we have multiple reactions with multiple species involved occuring at the same time? Is it possible to infer something about the kinetic parameters of such a system by only looking at the steady-state concentrations of the species in the system under different experimental conditions? In this post, we'll apply some differential equations and simple optimization in Python to try to find out.</p>
+<p><a href="https://drive.google.com/file/d/1W6e5SOa43QL5oSMiDajn3SlHSajkE_XZ/view?usp=sharing"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p class="more"><a href="biochemical-kinetics-steady-state-combinations/">Read more…</a></p>
+</div>
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="biochemical-kinetics-reaction-velocities/" class="u-url">Fitting a Michaelis-Menten model to biochemical kinetics data</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="biochemical-kinetics-reaction-velocities/" rel="bookmark">
+            <time class="published dt-published" datetime="2018-01-11T00:00:00-05:00" itemprop="datePublished" title="2018-01-11">2018-01-11</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="biochemical-kinetics-reaction-velocities/#disqus_thread" data-disqus-identifier="cache/posts/biochemical_kinetics_reaction_velocities.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../images/blog/biochemical-kinetics-reaction-velocities.png" alt=""></p>
+<p>Biochem students will likely remember the mathematical beauty of <a href="https://en.wikipedia.org/wiki/Enzyme_kinetics#Michaelis%E2%80%93Menten_kinetics">enzyme kinetics models like the Michaelis-Menten model</a>. In this short post, we'll take a look at how we can fit this kind of model to experimental data in Python using some staightforward optimization.</p>
+<p><a href="https://drive.google.com/file/d/1jX3DFISXMPWc8fmI6cqxgYdxAXlVbsUm/view?usp=sharing"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p class="more"><a href="biochemical-kinetics-reaction-velocities/">Read more…</a></p>
+</div>
+</div>
+</div>
+    </div>
+    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="mal-hype-ladder/" class="u-url">MyAnimeList hype visualization with D3.js</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="mal-hype-ladder/" rel="bookmark">
+            <time class="published dt-published" datetime="2017-11-10T00:00:00-05:00" itemprop="datePublished" title="2017-11-10">2017-11-10</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="mal-hype-ladder/#disqus_thread" data-disqus-identifier="cache/posts/mal_hype_ladder.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../images/blog/mal-hype-ladder.png" alt=""></p>
+<p>Everyone loves watching anime, but when there are so many shows airing it can be hard to keep track of what to watch and who's watching what. In this post, we'll use data from <a href="https://myanimelist.net/">MyAnimeList</a> to drive a custom <a href="https://d3js.org/">D3.js</a> visualization showing the ratings and number of episodes watched for all our friends.</p>
+<p><a href="https://colab.research.google.com/drive/0B1nL_8vlPlmWU1RfT3ZqT2FvOW8"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p class="more"><a href="mal-hype-ladder/">Read more…</a></p>
+</div>
+</div>
+</div>
+    </div>
+    </article>
+</div>
+
+        <ul class="pager postindexpager clearfix">
+<li class="previous"><a href="." rel="prev">Newer posts</a></li>
+        </ul>
+<script>var disqus_shortname="gilgi-blog";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha384-3lJUsx1TJHt7BA4udB5KPnDrlkO8T6J6v/op7ui0BbCjvZ9WqV4Xm6DTP6kQ/iBH" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script><!--End of body content--><footer id="footer">
+            Contents © 2019         <a href="mailto:site@gilgi.org">gilgi</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+            
+        </footer>
+</div>
+</div>
+
+
+        <script src="../assets/js/all-nocdn.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

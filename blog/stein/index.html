@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#
+" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stein's paradox | gilgi.org</title>
+<link href="../../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/ipython.min.css" rel="stylesheet" type="text/css">
+<link href="../../assets/css/nikola_ipython.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../../rss.xml">
+<link rel="canonical" href="https://gilgi.org/blog/stein/">
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script><!--[if lt IE 9]><script src="../../assets/js/html5.js"></script><![endif]--><meta name="author" content="gilgi">
+<link rel="prev" href="../dota-hero-embedding/" title="Creating Dota 2 hero embeddings with Word2vec" type="text/html">
+<link rel="next" href="../linear-regression/" title="Linear regression in Python (UPenn ENM 375 guest lecture)" type="text/html">
+<meta property="og:site_name" content="gilgi.org">
+<meta property="og:title" content="Stein's paradox">
+<meta property="og:url" content="https://gilgi.org/blog/stein/">
+<meta property="og:description" content="I recently heard of Stein's paradox, and at first I couldn't believe it! In this post, I'll convince myself by comparing the risk of a James–Stein estimator to a naive estimator on a simulated high-di">
+<meta property="og:image" content="https://gilgi.org/blog/stein/images/blog/stein.png">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2018-11-29T00:00:00-05:00">
+<meta property="article:tag" content="machine learning">
+<meta property="article:tag" content="notebook">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="statistics">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-expand-md static-top mb-4
+navbar-dark bg-dark
+"><div class="container">
+<!-- This keeps the margins nice -->
+        <a class="navbar-brand" href="https://gilgi.org/">
+
+            <span id="blog-title">gilgi.org</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="bs-navbar">
+            <ul class="navbar-nav mr-auto">
+<li class="nav-item">
+<a href="../../research/" class="nav-link">Research</a>
+                </li>
+<li class="nav-item">
+<a href="../../code/" class="nav-link">Code</a>
+                </li>
+<li class="nav-item">
+<a href="../" class="nav-link">Blog</a>
+                </li>
+<li class="nav-item">
+<a href="../../categories/" class="nav-link">Tags</a>
+                </li>
+<li class="nav-item">
+<a href="../../archive/" class="nav-link">Archive</a>
+                </li>
+<li class="nav-item">
+<a href="http://status.gilgi.org" class="nav-link">Network Status</a>
+
+                
+            </li>
+</ul>
+<!-- Google custom search --><form method="get" action="https://www.google.com/search" class="navbar-form navbar-right" role="search" _lpchecked="1">
+<input type="text" name="q" class="form-control" placeholder="Search"><input type="hidden" name="sitesearch" value="https://gilgi.org/">
+</form>
+<!-- End of custom search -->
+
+
+            <ul class="navbar-nav navbar-right">
+<li class="nav-item">
+    <a href="index.ipynb" id="sourcelink" class="nav-link">Source</a>
+    </li>
+
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        
+        
+        
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Stein's paradox</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard p-author h-card"><span class="byline-name fn p-name" itemprop="author">
+                    gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="." rel="bookmark">
+            <time class="published dt-published" datetime="2018-11-29T00:00:00-05:00" itemprop="datePublished" title="2018-11-29">2018-11-29</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="#disqus_thread" data-disqus-identifier="cache/posts/stein.html">Comments</a>
+
+
+            
+        </p>
+<p class="sourceline"><a href="index.ipynb" class="sourcelink">Source</a></p>
+
+        </div>
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="../../images/blog/stein.png" alt=""></p>
+<p>I recently heard of <a href="https://en.wikipedia.org/wiki/Stein%27s_example">Stein's paradox</a>, and at first I couldn't believe it! In this post, I'll convince myself by comparing the risk of a <a href="https://en.wikipedia.org/wiki/James%E2%80%93Stein_estimator">James–Stein estimator</a> to a naive estimator on a simulated high-dimensional dataset.</p>
+<p><a href="https://colab.research.google.com/drive/1MriKl_EaJM6jdDUFcK4Fc7LrgwqXJf2U"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<!-- TEASER_END -->
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We have a single data point $x$ drawn from a $d$-dimensional multivariate normal distribution with mean vector $\theta$ and covariance matrix $I_d$ (the $d\times d$ identity matrix).</p>
+<p>$X \sim \mathcal{N}(\theta, I_d)$</p>
+<p>We want to obtain an estimate $\hat{\theta}$ of $\theta$ by using only $x$.</p>
+<p>We will compare different estimators $\hat{\theta}(x)$ using their "risk", which is basically their mean squared error across trials.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The simplest estimator is $\hat{\theta}(x) = x$. We will call this the naive estimator.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">est_naive</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Stein's paradox suggests that we can come up with an alternative estimator that has lower risk: $\hat{\theta}(x) = \left(1 - \frac{d - 2}{||x||_2^2}\right) \times x$. We can think of this as shrinking our estimate $\hat{\theta}$ towards zero, tuning the strength of the shrinkage we apply by estimating something directly from our single data point (namely, it's Euclidean norm).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">est_stein</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We define a function to estimate the risk of an estimator at a particular true value of $\theta$ by averaging the mean squared error of the estimator over $m$ trials.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">mean_risk</span><span class="p">(</span><span class="n">est</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e6</span><span class="p">)):</span>
+    <span class="n">rvs</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="n">ests</span> <span class="o">=</span> <span class="n">est</span><span class="p">(</span><span class="n">rvs</span><span class="p">)</span>
+    <span class="n">rs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">((</span><span class="n">ests</span> <span class="o">-</span> <span class="n">theta</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rs</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We now evaluate the mean risk for various choices of $\theta$. For simplicity, we just try a sequence of $\theta$'s whose components are all equal and take integer values between 0 and 10 inclusive.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">naive_risk</span> <span class="o">=</span> <span class="p">[</span><span class="n">mean_risk</span><span class="p">(</span><span class="n">est_naive</span><span class="p">,</span> <span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">)]</span>
+<span class="n">stein_risk</span> <span class="o">=</span> <span class="p">[</span><span class="n">mean_risk</span><span class="p">(</span><span class="n">est_stein</span><span class="p">,</span> <span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can then plot the mean risk.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">naive_risk</span><span class="p">)),</span> <span class="n">naive_risk</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'naive'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'r'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stein_risk</span><span class="p">)),</span> <span class="n">stein_risk</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Stein'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'b'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$\theta_i$'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'risk'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;matplotlib.legend.Legend at 0x7f46a450ec18&gt;</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0Adw5Q0YgAAAAASUVORK5CYII=">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can see that when the true $\theta$ is close to the zero vector, the Stein estimator has a much lower risk than the naive estimator. This is what we expect to happen if we think of the Stein estimator as performing some kind of Bayesian shrinkage towards a prior distribution over $\theta$ which happens to match the true $\theta$ reasonably well. We could imagine that some property like this might also hold for 1 or 2 dimensions. What is perhaps more surprising is that the Stein estimator has lower risk than the naive estimator even when the true $\theta$ is far from the zero vector (the Stein estimator appears to asymptotically approach the risk of the naive estimator from below as the distance between the true $\theta$ and the zero vector goes to infinity). This suggests that even when the choice of a Bayesian prior is arbitrarily "wrong" in the sense that it is centered very far from the true value of the parameter, it is still better to apply the shrinkage (as long as we are in high-dimensional space, $d \geq 3$).</p>
+
+</div>
+</div>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav"><nav><ul itemprop="keywords" class="tags">
+<li><a class="tag p-category" href="../../categories/machine-learning/" rel="tag">machine learning</a></li>
+            <li><a class="tag p-category" href="../../categories/notebook/" rel="tag">notebook</a></li>
+            <li><a class="tag p-category" href="../../categories/python/" rel="tag">Python</a></li>
+            <li><a class="tag p-category" href="../../categories/statistics/" rel="tag">statistics</a></li>
+        </ul>
+<ul class="pager hidden-print">
+<li class="previous">
+                <a href="../dota-hero-embedding/" rel="prev" title="Creating Dota 2 hero embeddings with Word2vec">Previous post</a>
+            </li>
+            <li class="next">
+                <a href="../linear-regression/" rel="next" title="Linear regression in Python (UPenn ENM 375 guest lecture)">Next post</a>
+            </li>
+        </ul></nav></aside><section class="comments hidden-print"><h2>Comments</h2>
+        
+        
+        <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="gilgi-blog",
+            disqus_url="https://gilgi.org/blog/stein/",
+        disqus_title="Stein's paradox",
+        disqus_identifier="cache/posts/stein.html",
+        disqus_config = function () {
+            this.language = "en";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="https://disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+        </section><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha384-3lJUsx1TJHt7BA4udB5KPnDrlkO8T6J6v/op7ui0BbCjvZ9WqV4Xm6DTP6kQ/iBH" crossorigin="anonymous"></script><script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script></article><script>var disqus_shortname="gilgi-blog";(function(){var a=document.createElement("script");a.async=true;a.src="https://"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script><!--End of body content--><footer id="footer">
+            Contents © 2019         <a href="mailto:site@gilgi.org">gilgi</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+            
+        </footer>
+</div>
+</div>
+
+
+        <script src="../../assets/js/all-nocdn.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>

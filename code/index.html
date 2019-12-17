@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#
+" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code | gilgi.org</title>
+<link href="../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/ipython.min.css" rel="stylesheet" type="text/css">
+<link href="../assets/css/nikola_ipython.css" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#5670d4">
+<meta name="generator" content="Nikola (getnikola.com)">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
+<link rel="canonical" href="https://gilgi.org/code/">
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+    },
+    displayAlign: 'center', // Change this to 'left' if you want left-aligned equations.
+    "HTML-CSS": {
+        styles: {'.MathJax_Display': {"margin": 0}}
+    }
+});
+</script><!--[if lt IE 9]><script src="../assets/js/html5.js"></script><![endif]--><meta name="author" content="gilgi">
+<meta property="og:site_name" content="gilgi.org">
+<meta property="og:title" content="Code">
+<meta property="og:url" content="https://gilgi.org/code/">
+<meta property="og:description" content="Research software
+
+lib5c
+Paper |
+Source |
+Docs |
+PyPI |
+Docker
+lib5c is a library for Chromosome Conformation Capture Carbon Copy (5C) data
+analysis I wrote during my PhD. It forms the backbone of a g">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2019-12-05T00:00:00-05:00">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-expand-md static-top mb-4
+navbar-dark bg-dark
+"><div class="container">
+<!-- This keeps the margins nice -->
+        <a class="navbar-brand" href="https://gilgi.org/">
+
+            <span id="blog-title">gilgi.org</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-navbar" aria-controls="bs-navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="bs-navbar">
+            <ul class="navbar-nav mr-auto">
+<li class="nav-item">
+<a href="../research/" class="nav-link">Research</a>
+                </li>
+<li class="nav-item active">
+<a href="." class="nav-link">Code <span class="sr-only">(active)</span></a>
+                </li>
+<li class="nav-item">
+<a href="../blog/" class="nav-link">Blog</a>
+                </li>
+<li class="nav-item">
+<a href="../categories/" class="nav-link">Tags</a>
+                </li>
+<li class="nav-item">
+<a href="../archive/" class="nav-link">Archive</a>
+                </li>
+<li class="nav-item">
+<a href="http://status.gilgi.org" class="nav-link">Network Status</a>
+
+                
+            </li>
+</ul>
+<!-- Google custom search --><form method="get" action="https://www.google.com/search" class="navbar-form navbar-right" role="search" _lpchecked="1">
+<input type="text" name="q" class="form-control" placeholder="Search"><input type="hidden" name="sitesearch" value="https://gilgi.org/">
+</form>
+<!-- End of custom search -->
+
+
+            <ul class="navbar-nav navbar-right">
+<li class="nav-item">
+    <a href="index.md" id="sourcelink" class="nav-link">Source</a>
+    </li>
+
+
+                
+            </ul>
+</div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+    <div class="body-content">
+        <!--Body content-->
+        
+        
+        
+<article class="post-text storypage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="." class="u-url">Code</a></h1>
+
+        
+
+    </header><div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<h2>Research software</h2>
+<p></p>
+<div class="container-fluid"><div class="row">
+<div class="col-md-4 col-xs-12">
+<h4>lib5c</h4>
+<p><a href="https://www.ncbi.nlm.nih.gov/pubmed/30904376">Paper</a> |
+<a href="https://bitbucket.org/creminslab/lib5c">Source</a> |
+<a href="https://lib5c.readthedocs.io/">Docs</a> |
+<a href="https://pypi.org/project/lib5c/">PyPI</a> |
+<a href="https://hub.docker.com/r/creminslab/lib5c">Docker</a></p>
+<p>lib5c is a library for Chromosome Conformation Capture Carbon Copy (5C) data
+analysis I wrote during my PhD. It forms the backbone of a good portion of
+<a href="http://creminslab.com/">my lab's</a> computational infrastructure. In addition to
+an easily-customizable 5C analysis pipeline, lib5c also provides statistical
+utilities and custom visualizations we use in nearly every project.
+</p>
+</div>
+<div class="col-md-4 col-xs-12">
+<h4>iceflow</h4>
+<p><a href="https://github.com/sclabs/iceflow">Source</a> |
+<a href="https://pypi.org/project/iceflow/">PyPI</a></p>
+<p>iceflow is a meta-framework for training and evaluating neural networks I wrote
+around <a href="https://www.tensorflow.org/">TensorFlow</a> and <a href="https://github.com/deepmind/sonnet">Sonnet</a>
+back in 2017 when re-using architectures and running reproducible benchmarks was
+considerably more difficult than it is today. iceflow was designed to make it
+easy to connect reusable datasets and neural network models in a plug-and-play
+manner, as shown off in example implementations of an <a href="https://github.com/sclabs/iceflow/tree/master/examples/mlp">MLP</a>
+and an <a href="https://github.com/sclabs/iceflow/tree/master/examples/autoencoder">autoencoder</a>.
+</p>
+</div>
+<div class="col-md-4 col-xs-12">
+<h4>projectile</h4>
+<p><a href="https://github.com/sclabs/projectile">Source</a> |
+<a href="https://pypi.org/project/projectile/">PyPI</a></p>
+<p>projectile is a tile-on-demand tile server I built using <a href="https://pillow.readthedocs.io/en/stable/">PIL</a>
+and <a href="https://www.tornadoweb.org/en/stable/">Tornado</a>. projectile exposes parts
+of a large image or matrix over a tile server-like API without requiring a tiling
+or chunking step. This makes it attractive for use cases where the image data
+changes frequently and the median number of expected requests per tile is close
+to zero - a regime very different from typical map tiling.
+</p>
+</div>
+</div></div>
+<h2>Proprietary research tools</h2>
+<p></p>
+<div class="container-fluid"><div class="row">
+<div class="col-md-8 col-xs-12">
+<h4>hiclite</h4>
+<p>hiclite is a Python package for genome-wide loop calling in Hi-C datasets. It
+re-implements parts of the
+<a href="https://github.com/aidenlab/juicer">Juicer/HiCCUPS Hi-C processing and loop calling pipeline</a>,
+but features a fast implementation of convolution on banded matrices, allowing
+it to run quickly without GPU acceleration. Since it's written in Python, my lab
+has been able to tweak hiclite to modify the expected modeling steps and call
+stripes in Hi-C data. It has been used in <a href="https://www.ncbi.nlm.nih.gov/pubmed/31776509">our 2019 Nature collaboration</a>
+as well as a manuscript currently under revision.
+</p>
+</div>
+<div class="col-md-4 col-xs-12">
+<h4>hiczoom</h4>
+<p>hiczoom is a Python package that provides a custom client for <a href="https://github.com/sclabs/projectile">projectile</a>
+that I built using <a href="https://d3js.org">D3.js</a>. It enables browser-based
+visualization of genome-wide folding maps with seamless zooming and panning,
+combined with overlayed reference genes, ChIP-seq signal tracks, and annotation
+of called loops.
+</p>
+</div>
+</div></div>
+<h2>Just for fun: webapps and chatbots</h2>
+<p></p>
+<div class="container-fluid"><div class="row">
+<div class="col-md-4 col-xs-12">
+<h4>scootbot2.0</h4>
+<p><a href="https://github.com/sclabs/scootbot2.0">Source</a></p>
+<p>scootbot2.0 is a custom multi-function Slack chatbot built with <a href="https://botkit.ai/">botkit</a>
+and <a href="https://nodejs.org/en/">Node.js</a>. It is the spiritual successor to the
+original <a href="https://github.com/sclabs/scootbot">ScootBot</a> which was a Skype
+chatbot written in C#. scootbot2.0 provides an interface to 14 different APIs
+including <a href="https://cloud.gilgi.org">the gilgi.org cloud service</a>.
+</p>
+</div>
+<div class="col-md-4 col-xs-12">
+<h4>sitestatus</h4>
+<p><a href="https://github.com/sclabs/sitestatus">Source</a> |
+<a href="https://status.gilgi.org">Live example</a></p>
+<p>sitestatus is a site status webapp built with <a href="https://www.djangoproject.com/">Django</a>
+that provides a simple way to display automatically-updating status information
+for a list of websites or services that can be managed with a CMS-like interface
+and <a href="https://github.com/sclabs/sitestatus-nonrel">deployed to Google App Engine</a>.
+I use it to power the <a href="https://status.gilgi.org">gilgi.org network status page</a>.
+</p>
+</div>
+<div class="col-md-4 col-xs-12">
+<h4>sccms</h4>
+<p><a href="https://github.com/sclabs/sccms">Source</a> |
+<a href="https://romanchickens.gilgi.org">Live example</a></p>
+<p>sccms stands for Simple-Comic-CMS and is a
+<a href="https://www.djangoproject.com/">Django</a>-based webapp that makes it easy to
+display a simple webcomic on the web and manage it with a simple CMS-like
+interface. I use it to power the <a href="https://romanchickens.gilgi.org">Roman Chicken webcomic</a>.
+</p>
+</div>
+<div class="col-md-4 col-xs-12">
+<h4>gilgichat</h4>
+<p><a href="https://github.com/sclabs/gilgichat-meteor">Source</a> |
+<a href="http://oldchat.gilgi.org">Live pre-meteor tech demo</a></p>
+<p>gilgichat was a chat webapp I built using <a href="https://www.meteor.com/">Meteor</a> and
+<a href="https://www.mongodb.com/">MongoDB</a> back in 2016. gilgichat had the basic
+functionality of today's Slack, including channels, notification icons, status
+indicators, and emoji support. It was based on <a href="https://github.com/thomasgilgenast/gilgichat">an earlier tech demo</a>
+that was built using <a href="https://socket.io/">Socket.IO</a> in 2012 when websockets
+were very cool.
+</p>
+</div>
+<div class="col-md-4 col-xs-12">
+<h4>sclangular</h4>
+<p><a href="https://github.com/sclabs/sclangular">Source</a></p>
+<p>sclangular was an opinionated modular project structure and development
+toolchain for building single-page web applications with AngularJS. I wrote it
+back in 2014 before Angular 2 existed. It represents an early attempt to think
+about how to design simple, scalable, and flexible development frameworks.
+</p>
+</div>
+<div class="col-md-4 col-xs-12">
+<h4>shk</h4>
+<p><a href="https://github.com/sclabs/shk">Source</a></p>
+<p>shk was a <a href="https://www.djangoproject.com/">Django</a>-based webapp I built back in
+2012 when all my friends were playing an online strategy game called
+<a href="https://www.strongholdkingdoms.com/">Stronghold Kingdoms</a>. We used the app as
+a market to trade resources among ourselves, manage debt between players in the
+form of IOUs, and track shipments between our cities.
+</p>
+</div>
+</div></div>
+</div>
+    </div>
+    
+
+</article><!--End of body content--><footer id="footer">
+            Contents © 2019         <a href="mailto:site@gilgi.org">gilgi</a> - Powered by         <a href="https://getnikola.com" rel="nofollow">Nikola</a>         
+            
+            
+        </footer>
+</div>
+</div>
+
+
+        <script src="../assets/js/all-nocdn.js"></script><script>
+    baguetteBox.run('div#content', {
+        ignoreClass: 'islink',
+        captions: function(element) {
+            return element.getElementsByTagName('img')[0].alt;
+    }});
+    </script>
+</body>
+</html>
