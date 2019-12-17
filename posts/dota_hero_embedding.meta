@@ -1,0 +1,9 @@
+.. title: Creating Dota 2 hero embeddings with Word2vec
+.. slug: dota-hero-embedding
+.. date: 2018-05-27
+.. tags: Python, keras, Word2vec, Dota 2, embedding, machine learning, notebook
+.. has_math: true
+.. category:
+.. description:
+.. type: text
+.. previewimage: images/blog/dota-hero-embedding.png

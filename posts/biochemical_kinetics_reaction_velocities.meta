@@ -1,0 +1,9 @@
+.. title: Fitting a Michaelis-Menten model to biochemical kinetics data
+.. slug: biochemical-kinetics-reaction-velocities
+.. date: 2018-01-11
+.. tags: Python, biochemisty, optimization, enzyme kinetics, notebook
+.. has_math: true
+.. category:
+.. description:
+.. type: text
+.. previewimage: images/blog/biochemical-kinetics-reaction-velocities.png

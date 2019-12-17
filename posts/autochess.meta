@@ -1,0 +1,9 @@
+.. title: Visualizing trajectories of Dota Auto Chess games using LDA and TSNE
+.. slug: autochess
+.. date: 2019-05-18
+.. tags: Python, LDA, TSNE, visualization, Dota 2, notebook
+.. has_math: false
+.. category:
+.. description:
+.. type: text
+.. previewimage: images/blog/autochess.png
