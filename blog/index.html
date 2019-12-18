@@ -115,7 +115,7 @@ navbar-dark bg-dark
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="../images/blog/optimal-bh-fdr-control.png" alt=""></p>
 <p>Controlling for <a href="https://en.wikipedia.org/wiki/False_discovery_rate">false discovery rate (FDR)</a> has become a ubiquitous step in statistical analyses that test multiple hypotheses, like those commonly performed in the genomics field. The seminal method for controlling FDR, the <a href="https://en.wikipedia.org/wiki/False_discovery_rate#Benjamini%E2%80%93Hochberg_procedure">Benjamini-Hochberg (BH-FDR) procedure</a> guarantees FDR control under some simple assumptions, but how does it really perform in the limit of an ideal dataset and ideal statistical test? In this post, we'll dive into this question and reveal that the proportion of truly non-null data points has a major influence on the behavior of BH-FDR.</p>
-<p><a href="https://colab.research.google.com/drive/1VDCDU8GbbXZh3gP_rlX45OI4KEwT-S_0"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p><a href="https://colab.research.google.com/github/gilgi/gilgi.github.com/blob/src/posts/optimal_bh_fdr_control.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
 <p class="more"><a href="optimal-bh-fdr-control/">Read more…</a></p>
 </div>
 </div>
@@ -144,7 +144,7 @@ navbar-dark bg-dark
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Two concepts that are easy to confuse are <a href="https://en.wikipedia.org/wiki/Eigenvalues_and_eigenvectors">eigenvectors</a> and <a href="https://en.wikipedia.org/wiki/Principal_component_analysis">principle components</a>. When the matrix in question is symmetric, there is a relationship between the first eigenvector and the projection of the data onto its first principle component. In this post, we'll use <a href="https://en.wikipedia.org/wiki/Diagonalizable_matrix#Diagonalization">diagonalization</a> and <a href="https://en.wikipedia.org/wiki/Singular_value_decomposition">singular value decomposition</a> to try to shed some light on this.</p>
-<p><a href="https://colab.research.google.com/drive/1Qtzk8tt_CJ0tHNmQIun_ytem6eGXZLdz"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p><a href="https://colab.research.google.com/github/gilgi/gilgi.github.com/blob/src/posts/eigenvector.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
 <p class="more"><a href="eigenvector/">Read more…</a></p>
 </div>
 </div>
@@ -175,7 +175,7 @@ navbar-dark bg-dark
 <p><img src="../images/blog/dotafriends.png" alt=""></p>
 <p>What better way is there to enjoy games than with friends? Of course, some friends have better synergies than others. What if there was a way to quantify those synergies and draw a group of friends as a graph, with high-synergy friends placed close together and low-synergy friends placed further apart?</p>
 <p>In this post, we'll use the <a href="https://docs.opendota.com/">OpenDota API</a>, <a href="https://en.wikipedia.org/wiki/Multidimensional_scaling">multidimensional scaling (MDS)</a>, and <a href="https://networkx.github.io/">networkx</a> to visualize a network of friends playing Dota 2 together.</p>
-<p><a href="https://colab.research.google.com/drive/1lJkUGqKbb8GSzYP6ClreBx41lbwtf1P2"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p><a href="https://colab.research.google.com/github/gilgi/gilgi.github.com/blob/src/posts/dotafriends.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
 <p class="more"><a href="dotafriends/">Read more…</a></p>
 </div>
 </div>
@@ -205,7 +205,7 @@ navbar-dark bg-dark
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="../images/blog/poisson-rate-estimation-variance.png" alt=""></p>
 <p>Many applications of statistics to genomics involve modelling read counts from <a href="https://en.wikipedia.org/wiki/DNA_sequencing#High-throughput_methods">high-throughput sequencing experiments</a> as originating from a <a href="https://en.wikipedia.org/wiki/Poisson_point_process#Interpreted_as_a_counting_process">Poisson process</a> (or as something similar based on the closely-related <a href="https://en.wikipedia.org/wiki/Negative_binomial_distribution">negative binomial distribution</a>). In these experiments, we often want to estimate the true concentration $\mu$ of a particular DNA or RNA sequence in a sequencing library. This corresponds to the "rate" parameter of a Poison process, while the total number of reads sequenced can be thought of as related to its "elapsed time". How does the sequencing depth of the dataset (the total number of reads) impact the variance in the estimate of the true concentration? Read on to find out!</p>
-<p><a href="https://colab.research.google.com/drive/1Zc84Ohe9LCh3jpJd9OJBjIB9lKLt5Lbq"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p><a href="https://colab.research.google.com/github/gilgi/gilgi.github.com/blob/src/posts/poisson_rate_estimation_variance.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
 <p class="more"><a href="poisson-rate-estimation-variance/">Read more…</a></p>
 </div>
 </div>
@@ -235,7 +235,7 @@ navbar-dark bg-dark
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="../images/blog/knight-dialer.png" alt=""></p>
 <p>This week, a friend showed me the <a href="https://leetcode.com/problems/knight-dialer/">knight dialer coding problem</a>. As usual, I couldn't resist framing it as a graph exploration problem - read on to see how I tackled it.</p>
-<p><a href="https://colab.research.google.com/drive/1eJ1GHt4YTn4n65TrUxQBXwJOfFoK0gMd"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p><a href="https://colab.research.google.com/github/gilgi/gilgi.github.com/blob/src/posts/knight_dialer.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
 <p class="more"><a href="knight-dialer/">Read more…</a></p>
 </div>
 </div>
@@ -265,7 +265,7 @@ navbar-dark bg-dark
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="../images/blog/autochess.png" alt=""></p>
 <p>The Dota 2 custom map "Dota Auto Chess" is taking the gaming world by storm. Auto Chess is almost like a card game in which players attempt to improve their hand round after round while their "chesses" (cards) battle the other players in the game automatically. In this post, we'll explore the potential of <a href="https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation">latent Dirichlet allocation</a> to model strategies (specific combinations of cards that are often played together) as "topics". We will then try to visualize the evolution of Auto Chess "hands" over the course of individual games in terms of their topics using <a href="https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding">t-SNE</a>. These kinds of visualizations might help us learn how to more effectively evolve our strategies.</p>
-<p><a href="https://colab.research.google.com/drive/1zlAkpsSBb6HN0Jqzfk842fPZlnbmxF2F"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p><a href="https://colab.research.google.com/github/gilgi/gilgi.github.com/blob/src/posts/autochess.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
 <p class="more"><a href="autochess/">Read more…</a></p>
 </div>
 </div>
@@ -295,7 +295,7 @@ navbar-dark bg-dark
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="../images/blog/mle-scaled-mean.png" alt=""></p>
 <p>It's pretty common to run into statistical models that fit some kind of normalization factors that can be used to scale different data points to a common, comparable scale. When this happens to a <a href="https://en.wikipedia.org/wiki/Location%E2%80%93scale_family">location-scale family distribution</a> like the normal distribution, estimating the mean parameter of such a scaled distribution is pretty straightforward. In many genomics contexts, however, non-location-scale distributions such as the <a href="https://en.wikipedia.org/wiki/Poisson_distribution">Poisson</a> or <a href="https://en.wikipedia.org/wiki/Negative_binomial_distribution">negative binomial (NB)</a> distribution are used quite often. For example, it's common to model RNA-seq read counts using NB distributions scaled by the library size (i.e., some measure of the total sequencing depth). In this post, we'll take a deep dive into how to estimate the parameters of these "scaled" statistical models.</p>
-<p><a href="https://colab.research.google.com/drive/1SgMMvc3XhfIXoBx8tsyJt-yyBDlRFQCJ"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p><a href="https://colab.research.google.com/github/gilgi/gilgi.github.com/blob/src/posts/mle_scaled_mean.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
 <p class="more"><a href="mle-scaled-mean/">Read more…</a></p>
 </div>
 </div>
@@ -325,7 +325,7 @@ navbar-dark bg-dark
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="../images/blog/heatmap-simulation.png" alt=""></p>
 <p><a href="../research">My research</a> focuses on analyzing maps of the 3D structure of the genome. One of the things I always find helpful when trying to understand complex data like this is trying to simulate it myself to get a sense for how the data might behave. In this post, we'll add complexity step-by-step and work our way up to simulating realistic-looking genome folding maps from scratch!</p>
-<p><a href="https://colab.research.google.com/drive/19XfIwzGN0Zk0F48QBjjXIzt9yEq9DwFp"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p><a href="https://colab.research.google.com/github/gilgi/gilgi.github.com/blob/src/posts/heatmap_simulation.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
 <p class="more"><a href="heatmap-simulation/">Read more…</a></p>
 </div>
 </div>
@@ -354,9 +354,9 @@ navbar-dark bg-dark
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="../images/blog/linear-regression.png" alt=""></p>
-<p>I was recently invited to give a guest lecture in the course <a href="https://catalog.upenn.edu/courses/enm/">ENM 375 Biological Data Science I - Fundamentals of Biostatistics</a> at the University of Pennsylvania on the topic of linear regression in Python. As part of my lecture, I walked through this notebook. It might serve as a useful reference, covering everything from simulation and fitting to a wide variety of diagnostics. The walkthrough includes explanations of how to do everything in vanilla <code>numpy</code>/<code>scipy</code>, <code>scikit-learn</code>, and <code>statsmodels</code>. As a bonus, there's even a section on logistic regression at the end.</p>
+<p>I was recently invited to give a guest lecture in the course <a href="https://catalog.upenn.edu/courses/enm/">ENM 375 Biological Data Science I - Fundamentals of Biostatistics</a> at the University of Pennsylvania on the topic of <a href="https://en.wikipedia.org/wiki/Linear_regression">linear regression</a> in Python. As part of my lecture, I walked through this notebook. It might serve as a useful reference, covering everything from simulation and fitting to a wide variety of diagnostics. The walkthrough includes explanations of how to do everything in vanilla <a href="https://numpy.org/"><code>numpy</code></a>/<a href="https://www.scipy.org/"><code>scipy</code></a>, <a href="https://scikit-learn.org/"><code>scikit-learn</code></a>, and <a href="https://www.statsmodels.org/"><code>statsmodels</code></a>. As a bonus, there's even a section on <a href="https://en.wikipedia.org/wiki/Logistic_regression">logistic regression</a> at the end.</p>
 <p>Read on for more!</p>
-<p><a href="https://colab.research.google.com/drive/12UfEC7rAV_bAZlxQXt3bk-isCrDMZ07j"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p><a href="https://colab.research.google.com/github/gilgi/gilgi.github.com/blob/src/posts/linear_regression.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
 <p class="more"><a href="linear-regression/">Read more…</a></p>
 </div>
 </div>
@@ -386,7 +386,7 @@ navbar-dark bg-dark
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="../images/blog/stein.png" alt=""></p>
 <p>I recently heard of <a href="https://en.wikipedia.org/wiki/Stein%27s_example">Stein's paradox</a>, and at first I couldn't believe it! In this post, I'll convince myself by comparing the risk of a <a href="https://en.wikipedia.org/wiki/James%E2%80%93Stein_estimator">James–Stein estimator</a> to a naive estimator on a simulated high-dimensional dataset.</p>
-<p><a href="https://colab.research.google.com/drive/1MriKl_EaJM6jdDUFcK4Fc7LrgwqXJf2U"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+<p><a href="https://colab.research.google.com/github/gilgi/gilgi.github.com/blob/src/posts/stein.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
 <p class="more"><a href="stein/">Read more…</a></p>
 </div>
 </div>
