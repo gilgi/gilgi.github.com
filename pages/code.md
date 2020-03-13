@@ -25,6 +25,32 @@ an easily-customizable 5C analysis pipeline, lib5c also provides statistical
 utilities and custom visualizations we use in nearly every project.
 </div>
 <div class="col-md-4 col-xs-12">
+### hic3defdr
+
+[Source](https://bitbucket.org/creminslab/3defdr-hic) |
+[Docs](https://hic3defdr.readthedocs.io/) |
+[PyPI](https://pypi.org/project/hic3defdr/) |
+[Docker](https://hub.docker.com/r/creminslab/hic3defdr)
+
+hic3defdr is a genome-scale differential loop caller for Hi-C data, useful for
+quantitatively understanding how loops in the genome change across conditions.
+It implements a negative binomial statistcal model that accounts for technical
+biases in Hi-C datasets. It also comes with a Hi-C dataset simulator that can be
+used for benchmarking.
+</div>
+<div class="col-md-4 col-xs-12">
+### treeshaker
+
+[Source](https://github.com/sclabs/treeshaker) |
+[PyPI](https://pypi.org/project/treeshaker/)
+
+treeshaker is a tree-shaking library for Python projects - it identifies the
+minimal subset of Python modules required by a specific target module, and
+copies those files to an output directory. This is useful when your code is
+developed in a large monolithic library that you want to keep private while
+still releasing specific functionality to the public.
+</div>
+<div class="col-md-4 col-xs-12">
 ### iceflow
 
 [Source](https://github.com/sclabs/iceflow) |
