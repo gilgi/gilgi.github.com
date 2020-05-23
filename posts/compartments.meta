@@ -1,0 +1,9 @@
+.. title: Identifying compartments in Hi-C data
+.. slug: compartments
+.. date: 2020-04-15
+.. tags: Python, genomics, Hi-C, compartments, PCA, k-means, notebook
+.. has_math: true
+.. category:
+.. description:
+.. type: text
+.. previewimage: images/blog/compartments.png
