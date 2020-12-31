@@ -27,11 +27,15 @@
  </sitemap>
  <sitemap>
   <loc>https://gilgi.org/categories/compartments.xml</loc>
-  <lastmod>2020-05-23T20:33:00Z</lastmod>
+  <lastmod>2020-05-23T20:36:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://gilgi.org/categories/d3js.xml</loc>
   <lastmod>2020-05-23T20:33:00Z</lastmod>
+ </sitemap>
+ <sitemap>
+  <loc>https://gilgi.org/categories/docker.xml</loc>
+  <lastmod>2020-12-31T17:03:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://gilgi.org/categories/dota-2.xml</loc>
@@ -47,7 +51,7 @@
  </sitemap>
  <sitemap>
   <loc>https://gilgi.org/categories/genomics.xml</loc>
-  <lastmod>2020-05-23T20:33:00Z</lastmod>
+  <lastmod>2020-05-23T20:36:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://gilgi.org/categories/graph.xml</loc>
@@ -55,11 +59,11 @@
  </sitemap>
  <sitemap>
   <loc>https://gilgi.org/categories/hi-c.xml</loc>
-  <lastmod>2020-05-23T20:33:00Z</lastmod>
+  <lastmod>2020-05-23T20:36:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://gilgi.org/categories/k-means.xml</loc>
-  <lastmod>2020-05-23T20:33:00Z</lastmod>
+  <lastmod>2020-05-23T20:36:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://gilgi.org/categories/keras.xml</loc>
@@ -83,7 +87,7 @@
  </sitemap>
  <sitemap>
   <loc>https://gilgi.org/categories/notebook.xml</loc>
-  <lastmod>2020-05-23T20:33:00Z</lastmod>
+  <lastmod>2020-05-23T20:36:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://gilgi.org/categories/optimization.xml</loc>
@@ -91,11 +95,11 @@
  </sitemap>
  <sitemap>
   <loc>https://gilgi.org/categories/pca.xml</loc>
-  <lastmod>2020-05-23T20:33:00Z</lastmod>
+  <lastmod>2020-05-23T20:36:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://gilgi.org/categories/python.xml</loc>
-  <lastmod>2020-05-23T20:33:00Z</lastmod>
+  <lastmod>2020-12-31T17:03:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://gilgi.org/categories/statistics.xml</loc>
@@ -123,10 +127,10 @@
  </sitemap>
  <sitemap>
   <loc>https://gilgi.org/rss.xml</loc>
-  <lastmod>2020-05-23T20:33:00Z</lastmod>
+  <lastmod>2020-12-31T17:03:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://gilgi.org/sitemap.xml</loc>
-  <lastmod>2020-05-23T20:33:00Z</lastmod>
+  <lastmod>2020-12-31T17:03:00Z</lastmod>
  </sitemap>
 </sitemapindex>

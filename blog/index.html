@@ -91,7 +91,34 @@ navbar-dark bg-dark
 
     
 <div class="postindex">
-    <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="compartments/" class="u-url">Identifying compartments in Hi-C data</a></h1>
+    <article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="python-docker-slim/" class="u-url">Building slim Docker images for Python with multi-stage builds</a></h1>
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
+                gilgi
+            </span></p>
+            <p class="dateline">
+            <a href="python-docker-slim/" rel="bookmark">
+            <time class="published dt-published" datetime="2020-05-23T00:00:00-04:00" itemprop="datePublished" title="2020-05-23">2020-05-23</time></a>
+            </p>
+                <p class="commentline">
+        
+    <a href="python-docker-slim/#disqus_thread" data-disqus-identifier="cache/posts/python-docker-slim.html">Comments</a>
+
+
+        </p>
+</div>
+    </header><div class="p-summary entry-summary">
+    <div>
+<p>It seems like these days everyone has their own bespoke recommended method for Dockerizing Python applications.
+These include <a href="https://hub.docker.com/r/jupyter/datascience-notebook/">several</a> <a href="https://hub.docker.com/r/wiseio/datascience-docker/">base</a> <a href="https://hub.docker.com/r/civisanalytics/datascience-python/">images</a> for doing data science in Python.
+Some people <a href="https://nickjanetakis.com/blog/alpine-based-docker-images-make-a-difference-in-real-world-apps">advocate for the usage of alpine-based images</a>, others <a href="https://pythonspeed.com/articles/alpine-docker-python/">criticize alpine's lack of support for the types of workloads commonly used for data analysis in Python</a>.
+Many people bring up <a href="https://docs.docker.com/develop/develop-images/multistage-build/">Docker's support for multi-stage builds</a> as a way to keep Docker images small, but in what contexts are multi-stage builds effective?
+Is there a simple, generic way to use them without getting into a long discussion on how to optimize Dockerfiles?
+This post will discuss all these issues - and more!</p>
+<p class="more"><a href="python-docker-slim/">Read more…</a></p>
+</div>
+    </div>
+    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="compartments/" class="u-url">Identifying compartments in Hi-C data</a></h1>
         <div class="metadata">
             <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
                 gilgi
@@ -357,37 +384,6 @@ navbar-dark bg-dark
 <p><a href="../research">My research</a> focuses on analyzing maps of the 3D structure of the genome. One of the things I always find helpful when trying to understand complex data like this is trying to simulate it myself to get a sense for how the data might behave. In this post, we'll add complexity step-by-step and work our way up to simulating realistic-looking genome folding maps from scratch!</p>
 <p><a href="https://colab.research.google.com/github/gilgi/gilgi.github.com/blob/src/posts/heatmap_simulation.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
 <p class="more"><a href="heatmap-simulation/">Read more…</a></p>
-</div>
-</div>
-</div>
-    </div>
-    </article><article class="h-entry post-text" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title"><a href="linear-regression/" class="u-url">Linear regression in Python (UPenn ENM 375 guest lecture)</a></h1>
-        <div class="metadata">
-            <p class="byline author vcard"><span class="byline-name fn" itemprop="author">
-                gilgi
-            </span></p>
-            <p class="dateline">
-            <a href="linear-regression/" rel="bookmark">
-            <time class="published dt-published" datetime="2019-04-16T00:00:00-04:00" itemprop="datePublished" title="2019-04-16">2019-04-16</time></a>
-            </p>
-                <p class="commentline">
-        
-    <a href="linear-regression/#disqus_thread" data-disqus-identifier="cache/posts/linear_regression.html">Comments</a>
-
-
-        </p>
-</div>
-    </header><div class="p-summary entry-summary">
-    <div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="../images/blog/linear-regression.png" alt=""></p>
-<p>I was recently invited to give a guest lecture in the course <a href="https://catalog.upenn.edu/courses/enm/">ENM 375 Biological Data Science I - Fundamentals of Biostatistics</a> at the University of Pennsylvania on the topic of <a href="https://en.wikipedia.org/wiki/Linear_regression">linear regression</a> in Python. As part of my lecture, I walked through this notebook. It might serve as a useful reference, covering everything from simulation and fitting to a wide variety of diagnostics. The walkthrough includes explanations of how to do everything in vanilla <a href="https://numpy.org/"><code>numpy</code></a>/<a href="https://www.scipy.org/"><code>scipy</code></a>, <a href="https://scikit-learn.org/"><code>scikit-learn</code></a>, and <a href="https://www.statsmodels.org/"><code>statsmodels</code></a>. As a bonus, there's even a section on <a href="https://en.wikipedia.org/wiki/Logistic_regression">logistic regression</a> at the end.</p>
-<p>Read on for more!</p>
-<p><a href="https://colab.research.google.com/github/gilgi/gilgi.github.com/blob/src/posts/linear_regression.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
-<p class="more"><a href="linear-regression/">Read more…</a></p>
 </div>
 </div>
 </div>

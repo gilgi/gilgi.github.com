@@ -19,7 +19,7 @@
  </url>
  <url>
   <loc>https://gilgi.org/blog/</loc>
-  <lastmod>2020-05-23T20:33:00Z</lastmod>
+  <lastmod>2020-12-31T17:03:00Z</lastmod>
  </url>
  <url>
   <loc>https://gilgi.org/blog/autochess/</loc>
@@ -55,7 +55,7 @@
  </url>
  <url>
   <loc>https://gilgi.org/blog/index-1.html</loc>
-  <lastmod>2020-05-23T20:33:00Z</lastmod>
+  <lastmod>2020-12-31T17:03:00Z</lastmod>
  </url>
  <url>
   <loc>https://gilgi.org/blog/knight-dialer/</loc>
@@ -82,12 +82,16 @@
   <lastmod>2020-05-23T20:33:00Z</lastmod>
  </url>
  <url>
+  <loc>https://gilgi.org/blog/python-docker-slim/</loc>
+  <lastmod>2020-12-31T17:03:00Z</lastmod>
+ </url>
+ <url>
   <loc>https://gilgi.org/blog/stein/</loc>
   <lastmod>2020-05-23T20:33:00Z</lastmod>
  </url>
  <url>
   <loc>https://gilgi.org/categories/</loc>
-  <lastmod>2020-05-23T20:33:00Z</lastmod>
+  <lastmod>2020-12-31T17:03:00Z</lastmod>
  </url>
  <url>
   <loc>https://gilgi.org/categories/3d-genomes/</loc>
@@ -116,6 +120,10 @@
  <url>
   <loc>https://gilgi.org/categories/d3js/</loc>
   <lastmod>2020-05-23T20:33:00Z</lastmod>
+ </url>
+ <url>
+  <loc>https://gilgi.org/categories/docker/</loc>
+  <lastmod>2020-12-31T17:03:00Z</lastmod>
  </url>
  <url>
   <loc>https://gilgi.org/categories/dota-2/</loc>
