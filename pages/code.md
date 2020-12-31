@@ -27,6 +27,7 @@ utilities and custom visualizations we use in nearly every project.
 <div class="col-md-4 col-xs-12">
 ### hic3defdr
 
+[Paper](https://www.ncbi.nlm.nih.gov/pubmed/32859248) |
 [Source](https://bitbucket.org/creminslab/3defdr-hic) |
 [Docs](https://hic3defdr.readthedocs.io/) |
 [PyPI](https://pypi.org/project/hic3defdr/) |
